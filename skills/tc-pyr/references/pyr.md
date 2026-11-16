@@ -47,3 +47,6 @@ Always. As soon as the ticket's TCs exist in Qase, put them in a Test plan. One 
 - **Writing style (every TC field):** natural Thai, semi-formal. No special symbols or unusual characters (no emoji, arrows, decorative bullets, odd quotes or brackets used as decoration). Plain numbers and normal punctuation only.
 - **Glossary:** English-term-first. Use the ticket's own wording (keep English where the ticket writes English: checkbox, badge, dropdown, permission, scope, role, account, login, tab, filter, status). Do not raise glossary-vs-ticket collisions as questions; still show the term table for information.
 - **No Figma / PRD link in the ticket = absent.** Do not ask for them. Use ticket text only and record "no Figma / no PRD" in the pre-draft review and Remark.
+
+## Review-TC overlay
+Used when reviewing a PYR TC set (Helix `tc-review-workflow` with this overlay). Judge TCs against the rules above (ID format, Type values and order, equal counts, no `-`, English terms, Title starts with "ตรวจสอบ" with no expected result in it, short Precondition and Test Data, plain semi-formal wording with no special characters) in addition to AC/EC coverage. Also check that the ticket's Qase Test plan exists, is titled `PYR-xxx <ticket name>`, and holds exactly the ticket's cases.

@@ -6,12 +6,13 @@ Claude skills for QA test-case prep, one skill per project.
 |---|---|
 | `/tc-pyr 783` | Prepare TCs for **PYR-783**: write TCs, show an HTML draft and wait for Approve, then create them in Qase (Pyrite), build the Qase Test plan `PYR-783 <ticket name>`, fill the Drive TC sheet and tracking sheet |
 | `/tc-pyr 783 update` | `updateTCSheet`: sync all, in order: Qase TCs → Test plan → Drive sheet → tracking sheet |
+| `/tc-pyr 783 review` | Review TCs with Helix `tc-review` plus the PYR rules |
 | `/tc-pyr 783 run` | Manual execution from the TC sheet |
 | `/tc-ols 1234` | Prepare TCs for **OLS-1234** with the OLS rules (Core / Edge, OLS glossary) |
 | `/tc-ols 1234 format` | Move OLS TCs into the release template |
 | `/tc-ols 1234 run` | Manual execution from the TC sheet |
 
-TC review: use Helix `/tc-review`.
+TC review for OLS, or without PYR rules: Helix `/tc-review`.
 
 ## Layout
 

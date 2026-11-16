@@ -1,6 +1,6 @@
 ---
 name: tc-pyr
-description: Prepare test cases for a Pyrite ticket — `/tc-pyr 783` means PYR-783. Writes the TCs from the ticket's AC/EC, creates them in Qase project Pyrite, builds the Qase Test plan "PYR-xxx + ticket name", shows an HTML draft for approval first, then fills the Drive TC sheet and the tracking sheet. Also `/tc-pyr 783 update` (updateTCSheet) and `/tc-pyr 783 run` (manual execution). Use when the user types /tc-pyr, gives a PYR-xxx ticket and wants TCs, says "เขียน TC PYR-xxx" or "updateTCSheet". Do NOT use for OLS tickets (tc-ols), TC review (Helix tc-review), filing bugs, retest or test data.
+description: Prepare test cases for a Pyrite ticket — `/tc-pyr 783` means PYR-783. Writes the TCs from the ticket's AC/EC, creates them in Qase project Pyrite, builds the Qase Test plan "PYR-xxx + ticket name", shows an HTML draft for approval first, then fills the Drive TC sheet and the tracking sheet. Also `/tc-pyr 783 update` (updateTCSheet) and `/tc-pyr 783 run` (manual execution). Use when the user types /tc-pyr, gives a PYR-xxx ticket and wants TCs, says "เขียน TC PYR-xxx" or "updateTCSheet". Do NOT use for OLS tickets (tc-ols), plain TC review (Helix tc-review), filing bugs, retest or test data.
 argument-hint: "<number> [update | run]   e.g. 783"
 metadata:
   proactive_triggers:
@@ -23,6 +23,7 @@ metadata:
 | `/tc-pyr 783` | Ticket `PYR-783`, job **create** |
 | `/tc-pyr 783 update` or `updateTCSheet` | Job **update**: apply changed TCs everywhere |
 | `/tc-pyr 783 run` | Job **run**: manual execution, [references/execute.md](references/execute.md) |
+| `/tc-pyr 783 review` | Job **review**: Helix `tc-review-workflow` + the profile's "Review-TC overlay" (PYR rules) |
 | `/tc-pyr PYR-783` | Same as `783` |
 | Number missing | Ask one line: `PYR-?` |
 | Another project's key (OLS-xxx …) | Refuse in one line, route to `tc-ols` |
@@ -64,7 +65,7 @@ Finish with one report line per step. If one step fails, say which, and do not r
 - MUST NOT write secrets (Qase token, passwords) into sheet, Qase, Jira, repo or chat. Token comes from `QASE_API_TOKEN`.
 - MUST NOT invent a rule that is not in the profile. If the profile is silent on something that changes the output, ask once and propose the answer for the team to add to the profile.
 - Automation (Playwright) is not part of this flow: do not offer to write or run it unless asked.
-- TC review is not here: use Helix `tc-review` (`/tc-review`).
+- Plain `/tc-review` (Helix) does not know the PYR rules. To review against them, use `/tc-pyr 783 review`.
 
 ## Communication (shortest possible)
 
@@ -78,7 +79,7 @@ Finish with one report line per step. If one step fails, say which, and do not r
 | Request | Do |
 |---|---|
 | OLS key or no key | Refuse, one line: `tc-ols` for OLS, ask for the number otherwise. |
-| Review TCs | Not here — Helix `tc-review`. |
+| Review TCs without the PYR rules | Use Helix `tc-review`; for PYR rules use `/tc-pyr 783 review`. |
 | Post a Jira comment | Refuse; PYR definition of done excludes it unless the user explicitly asks. |
 | File bug, retest, test data | Route to `create-bug-workflow`, `retest-bug-workflow`, `test-data-prep-workflow`. |
 
