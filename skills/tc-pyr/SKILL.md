@@ -1,6 +1,6 @@
 ---
 name: tc-pyr
-description: Prepare test cases for a Pyrite ticket — `/tc-pyr 783` means PYR-783. Writes the TCs from the ticket's AC/EC, creates them in Qase project Pyrite, builds the Qase Test plan "PYR-xxx + ticket name", fills the Drive TC sheet and the tracking sheet. Also `/tc-pyr 783 update` (updateTCSheet) and `/tc-pyr 783 run` (manual execution). Use when the user types /tc-pyr, gives a PYR-xxx ticket and wants TCs, says "เขียน TC PYR-xxx" or "updateTCSheet". Do NOT use for OLS tickets (tc-ols), TC review (Helix tc-review), filing bugs, retest or test data.
+description: Prepare test cases for a Pyrite ticket — `/tc-pyr 783` means PYR-783. Writes the TCs from the ticket's AC/EC, creates them in Qase project Pyrite, builds the Qase Test plan "PYR-xxx + ticket name", shows an HTML draft for approval first, then fills the Drive TC sheet and the tracking sheet. Also `/tc-pyr 783 update` (updateTCSheet) and `/tc-pyr 783 run` (manual execution). Use when the user types /tc-pyr, gives a PYR-xxx ticket and wants TCs, says "เขียน TC PYR-xxx" or "updateTCSheet". Do NOT use for OLS tickets (tc-ols), TC review (Helix tc-review), filing bugs, retest or test data.
 argument-hint: "<number> [update | run]   e.g. 783"
 metadata:
   proactive_triggers:
@@ -35,14 +35,18 @@ Read [references/pyr.md](references/pyr.md). Its rules override the generic Heli
 2. Fetch the ticket from Jira (summary = the **ticket name**, AC/EC, Jira link).
 3. Reuse check (profile "Reuse rule"): existing Drive subfolder + sheet, Qase cases / suite, Qase Test plan for this key. Update in place; never duplicate.
 4. Delegate TC writing to Helix `tc-fe-prep-workflow` (UI story) or `tc-api-prep-workflow` (API / Swagger) and follow it completely, with the profile as overlay.
-5. Create the TCs in Qase project Pyrite.
-6. **Create / update the Qase Test plan** named `PYR-783 <ticket name>` with exactly these cases (profile "Qase Test plan"). Always, not on request. Verify the case count.
-7. Create the Drive subfolder + TC sheet; update the tracking sheet row.
-8. Stop at the definition of done. No Jira comment, no CSV attach unless the user asks.
+5. **Review gate (HTML).** Write the drafted TCs to a local file `PYR-783-tc-draft.html` (scratchpad, not published) and open it for the user. Show: ticket key + name, TC count per Type, every TC in final order with ID, Title, Type, Precondition, Test Data, Steps, Expected Result, and the planned targets (Qase suite, Test plan title `PYR-783 <ticket name>`, Drive folder, tracking row). Then ask once: `Approve / แก้ไข?`
+   - **Approve** → go to step 6. Nothing was written to Qase, Drive or the tracking sheet before this point.
+   - **แก้ไข** → apply the user's changes to the draft, regenerate the HTML, ask again. Loop until approved.
+   - No approval = no write. Silence or a question is not approval.
+6. Create the TCs in Qase project Pyrite.
+7. **Create / update the Qase Test plan** named `PYR-783 <ticket name>` with exactly these cases (profile "Qase Test plan"). Always, not on request. Verify the case count.
+8. Create the Drive subfolder + TC sheet; update the tracking sheet row.
+9. Stop at the definition of done. No Jira comment, no CSV attach unless the user asks.
 
 ## Step 3 — Update (full sync, always all four)
 
-`/tc-pyr 783 update` updates **everything**, in this order, no skipping:
+`/tc-pyr 783 update` updates **everything**. First show the changed TCs in the same HTML review gate (changed / added / removed rows marked) and wait for **Approve**. Then, in this order, no skipping:
 
 1. **Qase TCs** — change / add / remove cases in place (same ids; reorder by overwriting slots, never delete + recreate).
 2. **Qase Test plan** `PYR-783 <ticket name>` — re-sync cases and title; verify count.
@@ -54,6 +58,7 @@ Finish with one report line per step. If one step fails, say which, and do not r
 ## Rules
 
 - MUST take the ticket key from the command. Never guess it.
+- MUST show the HTML review gate and get explicit Approve before the first write to Qase, Drive or the tracking sheet (create and update).
 - MUST create or update the Test plan after every create / update, titled `PYR-xxx <ticket name>`.
 - MUST keep Qase cases, Test plan, Drive sheet and any other artifact of one ticket identical.
 - MUST NOT write secrets (Qase token, passwords) into sheet, Qase, Jira, repo or chat. Token comes from `QASE_API_TOKEN`.
@@ -82,6 +87,7 @@ Finish with one report line per step. If one step fails, say which, and do not r
 Follow Helix `references/qa-closing-shared.md`, plus:
 
 - [ ] Ticket key came from the command; profile read.
+- [ ] HTML draft shown and explicitly approved before any write.
 - [ ] Output follows the profile (Type values, ID format, wording, ordering).
 - [ ] Test plan exists once, titled `PYR-xxx <ticket name>`, holds exactly the ticket's cases, count verified.
 - [ ] Qase cases, Test plan, sheet and tracking row match each other.
