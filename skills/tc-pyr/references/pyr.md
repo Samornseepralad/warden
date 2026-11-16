@@ -17,7 +17,7 @@ Applies to every ticket with key `PYR-xxx`. Used by the `tc-pyr` skill.
 
 **Reuse rule:** before creating anything, check for an existing Drive subfolder `PYR-xxx` + sheet, Qase cases/suite and Qase Test plan for that ticket. If found, update in place (same ids/links). Create only what is missing.
 
-**`updateTCSheet`:** after a review or change, apply the updated TCs to every place (Qase cases, Qase Test plan, TC sheet, other artifacts of that ticket) so all match. Confirm the ticket if ambiguous.
+**`updateTCSheet`:** after a review or change, update all four, in order: Qase TCs → Qase Test plan → Drive TC sheet → tracking sheet. Confirm the ticket if ambiguous.
 
 **Definition of done:** Qase cases + Qase Test plan + Drive TC sheet + tracking sheet updated. Then report done and stop. Do NOT post a Jira comment or attach CSVs to Jira unless asked.
 

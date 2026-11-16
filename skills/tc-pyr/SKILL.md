@@ -40,9 +40,16 @@ Read [references/pyr.md](references/pyr.md). Its rules override the generic Heli
 7. Create the Drive subfolder + TC sheet; update the tracking sheet row.
 8. Stop at the definition of done. No Jira comment, no CSV attach unless the user asks.
 
-## Step 3 — Update
+## Step 3 — Update (full sync, always all four)
 
-Apply the changed TCs to **every** place: Qase cases, Qase Test plan (re-sync cases and title), Drive TC sheet, tracking sheet. All must match.
+`/tc-pyr 783 update` updates **everything**, in this order, no skipping:
+
+1. **Qase TCs** — change / add / remove cases in place (same ids; reorder by overwriting slots, never delete + recreate).
+2. **Qase Test plan** `PYR-783 <ticket name>` — re-sync cases and title; verify count.
+3. **Drive TC sheet** — same rows, IDs renumbered `TC-01…` after sorting.
+4. **Tracking sheet** — update the ticket's row (TC count, links, status).
+
+Finish with one report line per step. If one step fails, say which, and do not report done. Qase, plan, sheet and tracking row must end identical.
 
 ## Rules
 
