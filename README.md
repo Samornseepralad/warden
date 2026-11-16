@@ -38,6 +38,33 @@ ln -s "$PWD/skills/tc-ols" ~/.claude/skills/tc-ols
 
 Upgrading from the old single `tc-by-project` skill: remove its link first (`rm ~/.claude/skills/tc-by-project`).
 
+## Auto-update (set up once)
+
+GitHub cannot push files into your machine, so each person lets Claude Code pull `main` at every session start. After this, every merged change reaches you without any manual step.
+
+Add to `~/.claude/settings.json` (merge into an existing `hooks` block if you have one). Replace the path with where you cloned this repo:
+
+```json
+{
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "git -C \"$HOME/GitHub/warden\" pull --ff-only -q >/dev/null 2>&1 || true"
+          }
+        ]
+      }
+    ]
+  }
+}
+```
+
+- Keep your clone on `main` with no local edits. A fast-forward-only pull never overwrites local work; if it cannot pull, it silently skips.
+- Because the skills are symlinks into the clone, the pulled files are used right away.
+- Not on the latest? Run `git -C <your-clone> pull` by hand.
+
 ## Qase token
 
 `tc-pyr` creates PYR test cases and Test plans in Qase and needs your own Qase API token. Never share it in chat or commit it.
