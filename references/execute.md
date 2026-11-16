@@ -1,6 +1,6 @@
 # Execute tests (both projects)
 
-Current mode: **manual execution against the TC sheet.** Automation (Playwright) is planned but not started — do not run or write Playwright for this job unless the user asks. A move to Qase test runs is possible later; Qase cases already exist for PYR, so keep sheet and Qase identical.
+Current mode: **manual execution against the TC sheet.** Automation (Playwright) is planned but not started — do not run or write Playwright for this job unless the user asks. A move to Qase test runs is possible later; Qase cases already exist for PYR, so keep sheet and Qase identical. The ticket's Qase Test plan (PYR) is the base for any later run; do not start a run unless asked.
 
 ## Flow
 1. **Intake (one item at a time):** ticket key, TC sheet link (reuse the existing sheet for the ticket), environment URL, test account (never ask for or store the password in chat/sheets — the user logs in).

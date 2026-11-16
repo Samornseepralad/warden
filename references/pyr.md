@@ -11,14 +11,29 @@ Applies to every ticket with key `PYR-xxx`.
 ## Create-TC flow
 1. Create the TCs in Qase project Pyrite (suite chosen per feature; e.g. Authentication › Register).
 2. In the Drive folder, create subfolder `PYR-xxx` and put the TC sheet inside, copied from the template format.
-3. Update the tracking sheet row for the ticket.
-4. Keep Qase, sheet and any CSV identical.
+3. Create (or update) the Qase **Test plan** for the ticket — see "Qase Test plan" below.
+4. Update the tracking sheet row for the ticket.
+5. Keep Qase cases, Test plan, sheet and any CSV identical.
 
-**Reuse rule:** before creating anything, check for an existing Drive subfolder `PYR-xxx` + sheet and Qase cases/suite for that ticket. If found, update in place (same ids/links). Create only what is missing.
+**Reuse rule:** before creating anything, check for an existing Drive subfolder `PYR-xxx` + sheet, Qase cases/suite and Qase Test plan for that ticket. If found, update in place (same ids/links). Create only what is missing.
 
-**`updateTCSheet`:** after a review or change, apply the updated TCs to every place (Qase, TC sheet, other artifacts of that ticket) so all match. Confirm the ticket if ambiguous.
+**`updateTCSheet`:** after a review or change, apply the updated TCs to every place (Qase cases, Qase Test plan, TC sheet, other artifacts of that ticket) so all match. Confirm the ticket if ambiguous.
 
-**Definition of done:** Qase + Drive TC sheet + tracking sheet updated. Then report done and stop. Do NOT post a Jira comment or attach CSVs to Jira unless asked.
+**Definition of done:** Qase cases + Qase Test plan + Drive TC sheet + tracking sheet updated. Then report done and stop. Do NOT post a Jira comment or attach CSVs to Jira unless asked.
+
+## Qase Test plan
+One Test plan per ticket (card), made right after that ticket's TCs exist in Qase. Never one plan for several tickets.
+
+- **Title:** exactly the ticket key, `PYR-xxx`. This is the lookup key for the reuse rule.
+- **Description:** ticket summary and Jira link, one or two lines. No secrets.
+- **Cases:** every Qase case id of that ticket, in the final TC order (Happy Path → Failure Scenario → Edge Case → Exceptional Case). Nothing from other tickets.
+- **API** (header `Token: $QASE_API_TOKEN`, project code `Pyrite`, base `https://api.qase.io/v1`):
+  1. Find: `GET /plan/Pyrite?limit=100&offset=…` (page through) and match `title == "PYR-xxx"`.
+  2. Missing → `POST /plan/Pyrite` with `{"title","description","cases":[ids]}`.
+  3. Found → `PATCH /plan/Pyrite/{id}` with the same body. `cases` replaces the whole list, so always send the full current list. Never create a second plan with the same title.
+  4. Verify: `GET /plan/Pyrite/{id}`; the case count must equal the ticket's TC count. Report the plan id and link `https://app.qase.io/plan/Pyrite/{id}`.
+- If a case was added, removed or re-created later (review, `updateTCSheet`), re-sync the plan in the same run.
+- A Test plan is not a Test run. Do not start a run or set case results here.
 
 ## TC format rules
 - **Test Case ID:** `TC-01`, `TC-02`, … (prefix `TC-`, 2-digit padding; ask only if a ticket passes 99 TCs). Qase has no ID field (auto ids).

@@ -51,7 +51,8 @@ If the message names the job, announce the route in one line and go. If not, ask
 ## Rules
 
 - MUST confirm the project from the ticket key before applying any profile. OLS and PYR rules are not interchangeable (Test Case Type values, ID format and glossary differ).
-- MUST keep Qase, the Drive sheet and any other artifact of one ticket identical.
+- MUST keep Qase (cases and Test plan), the Drive sheet and any other artifact of one ticket identical.
+- For PYR, after the Create job MUST create or update that ticket's Qase Test plan (one plan per ticket); rules in the profile. OLS has no Qase layout yet, so no Test plan there.
 - MUST NOT write secrets (Qase token, passwords, account credentials) into the sheet, Qase, Jira, repo or chat. Tokens stay in the local secrets file named in the profile.
 - MUST NOT invent a rule that is not in the profile. If the profile is silent on something that changes the output, ask once and propose the answer for the team to add to the profile.
 - Automation (Playwright) is not part of this flow yet: do not offer to write or run Playwright for TC execution unless the user asks.
@@ -83,5 +84,6 @@ Follow Helix `references/qa-closing-shared.md`, plus:
 
 - [ ] Project confirmed from the ticket key and its profile was read.
 - [ ] Output follows the profile (Type values, ID format, wording, ordering).
+- [ ] PYR: the ticket's Qase Test plan exists once, holds exactly the ticket's cases, and its case count was verified.
 - [ ] Qase, sheet and any other artifact of the ticket match each other.
 - [ ] Nothing posted outside the profile's definition of done; no secret written anywhere.
