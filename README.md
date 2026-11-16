@@ -1,33 +1,45 @@
-# tc-by-project
+# warden
 
-Claude skill: project-aware QA flow for OLS and Pyrite (PYR). 
-One entry point to create TCs, review TCs and execute tests, applying each project's own rules.
+Claude skills for QA test-case prep, one skill per project.
+
+| Command | Does |
+|---|---|
+| `/tc-pyr 783` | Prepare TCs for **PYR-783**: write TCs, create them in Qase (Pyrite), build the Qase Test plan `PYR-783 <ticket name>`, fill the Drive TC sheet and tracking sheet |
+| `/tc-pyr 783 update` | `updateTCSheet`: apply changed TCs to Qase cases, Test plan, sheet, tracking sheet |
+| `/tc-pyr 783 run` | Manual execution from the TC sheet |
+| `/tc-ols 1234` | Prepare TCs for **OLS-1234** with the OLS rules (Core / Edge, OLS glossary) |
+| `/tc-ols 1234 format` | Move OLS TCs into the release template |
+| `/tc-ols 1234 run` | Manual execution from the TC sheet |
+
+TC review: use Helix `/tc-review`.
+
+## Layout
+
+```
+skills/tc-pyr/   SKILL.md + references/{pyr,execute}.md
+skills/tc-ols/   SKILL.md + references/{ols,execute}.md
+```
 
 ## Prerequisite: Helix
 
-**Install Helix first.** This skill does not work on its own. 
-It delegates to Helix workflows 
-- `tc-fe-prep-workflow`
-- `tc-api-prep-workflow`
-- `tc-review-workflow`
-- `tc-change-format-workflow`, `create-bug-workflow`
-- `retest-bug-workflow`
-
-Helix reference files (`session-start-context.md`, `qa-closing-shared.md`). Without Helix, only the manual execute flow (`references/execute.md`) and the OLS/PYR rules work.
+**Install Helix first.** The skills delegate to Helix workflows: `tc-fe-prep-workflow`, `tc-api-prep-workflow`, `tc-change-format-workflow` (OLS), `create-bug-workflow`, `retest-bug-workflow`, and use its reference files (`session-start-context.md`, `qa-closing-shared.md`).
 
 Helix: https://github.com/Thitic9203/helix (install steps are in its README).
 
 ## Install
 
-Symlink this repo as a skill folder:
+Symlink each skill folder:
 
 ```bash
-ln -s "$PWD" ~/.claude/skills/tc-by-project
+ln -s "$PWD/skills/tc-pyr" ~/.claude/skills/tc-pyr
+ln -s "$PWD/skills/tc-ols" ~/.claude/skills/tc-ols
 ```
+
+Upgrading from the old single `tc-by-project` skill: remove its link first (`rm ~/.claude/skills/tc-by-project`).
 
 ## Qase token
 
-The skill creates PYR test cases in Qase and needs your own Qase API token. Never share it in chat or commit it.
+`tc-pyr` creates PYR test cases and Test plans in Qase and needs your own Qase API token. Never share it in chat or commit it.
 
 1. In Qase, open your profile, then **API tokens**, and create a token. Copy it once.
 2. Save it outside any git repo:
