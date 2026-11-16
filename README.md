@@ -65,6 +65,17 @@ Add to `~/.claude/settings.json` (merge into an existing `hooks` block if you ha
 - Because the skills are symlinks into the clone, the pulled files are used right away.
 - Not on the latest? Run `git -C <your-clone> pull` by hand.
 
+## Pyrite prototype login
+
+`tc-pyr` compares each ticket with the Pyrite prototype. The URL and username live in the Tracking sheet `Config` tab (`PROTOTYPE_URL`, `PROTOTYPE_USER`). The password stays on your machine only; ask the team for it and never paste it in chat, sheet, Jira or this repo.
+
+```bash
+touch ~/.config/pyr-prototype.env && chmod 600 ~/.config/pyr-prototype.env
+printf 'export PYR_PROTOTYPE_USER=<username>\nexport PYR_PROTOTYPE_PASSWORD=<password>\n' > ~/.config/pyr-prototype.env
+```
+
+Load it in `~/.zshrc` like the Qase token: `[ -f ~/.config/pyr-prototype.env ] && . ~/.config/pyr-prototype.env`.
+
 ## Qase token
 
 `tc-pyr` creates PYR test cases and Test plans in Qase and needs your own Qase API token. Never share it in chat or commit it.
