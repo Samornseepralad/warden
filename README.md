@@ -144,7 +144,7 @@ Team-private values stay out of this public repo. Add to the `Config` tab (Key, 
 |---|---|
 | `VIDEO_FOLDER` | Drive folder for mp4 evidence (`/qase-run`, `/test-task`) |
 | `DISCORD_QA_CHANNEL`, `DISCORD_PO_CHANNEL` | Discord channels for the QA thread reply and the PO review request (`/tc-pyr xxx review`) |
-| `MENTION_SAMORN`, `MENTION_NIPIT`, `MENTION_SUJAREE` | Discord mention of each QA member, exactly as Discord needs it (`/tc-pyr xxx`) |
+| `MENTION_SAMORN`, `MENTION_NIPIT`, `MENTION_SUJAREE` | Discord username (or `<@id>` mention) of each QA member (`/tc-pyr xxx`); a username is resolved to a real mention at post time |
 | `PO_MENTIONS` | The PO mentions exactly as Discord needs them (role and person) |
 | `QA_REVIEWERS` | E-mails to tag for review, comma separated (`/test-task`) |
 | `PROTOTYPE_URL`, `PROTOTYPE_USER` | Pyrite prototype (see below) |
