@@ -21,7 +21,7 @@ TC review for OLS, or without PYR rules: Helix `/tc-review`.
 ### `/tc-pyr xxx` — create TCs for PYR-xxx
 1. Read the ticket from Jira (AC/EC, business rules, details).
 2. **Ticket review**: compare the ticket with the prototype for layout and flow (Figma / PRD only if linked; absent means absent). **All button names and UI text come from the ticket only**; the prototype is a rough picture for developers, not a wording source. **Scope check**: list AC/EC that belong to another card (ticket section "ไม่อยู่ใน ticket นี้:") or go beyond the ticket, as short bullets for the PO.
-3. Write the TCs (Helix `tc-fe-prep-workflow` / `tc-api-prep-workflow`) with the PYR rules.
+3. Write the TCs (Helix `tc-fe-prep-workflow` / `tc-api-prep-workflow`) with the PYR rules. Button names and UI text come from the ticket only; the prototype only guides layout and flow. A button the ticket does not name becomes a question for the PO, not a name borrowed from the prototype.
 4. **HTML draft** opens for review: TCs, mismatches, a "ต้องถาม PO" section. Reply **Approve** or **แก้ไข**. Nothing is written before Approve.
 5. On Approve: Qase TCs → Qase Test plan `PYR-xxx <ticket name>` → Drive TC sheet → tracking sheet.
 

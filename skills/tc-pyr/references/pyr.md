@@ -10,7 +10,7 @@ Applies to every ticket with key `PYR-xxx`. Used by the `tc-pyr` skill.
 - Drive output folder and TC sheet template: read them from the `Config` tab of the Tracking sheet (columns: Key, Value; keys `DRIVE_FOLDER` and `TC_TEMPLATE`). If the tab or a key is missing, ask once; never guess a link.
 
 ## Create-TC flow
-1. Create the TCs in Qase project Pyrite (suite chosen per feature; e.g. Authentication › Register).
+1. Write the TCs with the wording rule below ("Wording source"), then create them in Qase project Pyrite (suite chosen per feature; e.g. Authentication › Register).
 2. In the Drive folder, create subfolder `PYR-xxx` and put the TC sheet inside, copied from the template format.
 3. Create (or update) the Qase **Test plan** for the ticket — see "Qase Test plan" below.
 4. Update the tracking sheet row for the ticket.
@@ -76,6 +76,7 @@ Always. As soon as the ticket's TCs exist in Qase, put them in a Test plan. One 
 - **Test Title:** start with "ตรวจสอบ". Describe what is being checked only; never put the expected result in the title.
 - **Precondition and Test Data:** short sentences, one idea per line, no long explanations.
 - **Writing style (every TC field):** natural Thai, semi-formal. No special symbols or unusual characters (no emoji, arrows, decorative bullets, odd quotes or brackets used as decoration). Plain numbers and normal punctuation only.
+- **Wording source (create and review):** every button name and other UI text written in a TC (Title, Precondition, Test Data, Steps, Expected Result) is taken from the ticket only, exactly as the ticket writes it. The prototype supplies layout and flow only (which screens, in what order, which elements) and is never a wording source. If the ticket does not name a button or text, describe the action in the ticket's own words and add a `ticket ไม่ระบุชื่อปุ่ม …` line to "ต้องถาม PO" in the HTML gate; do not borrow the name.
 - **Glossary:** English-term-first. Use the ticket's own wording (keep English where the ticket writes English: checkbox, badge, dropdown, permission, scope, role, account, login, tab, filter, status). Do not raise glossary-vs-ticket collisions as questions; still show the term table for information.
 - **No Figma / PRD link in the ticket = absent.** Do not ask for them. Record "no Figma / no PRD" in the pre-draft review and Remark. The prototype (see "Ticket review") is still compared with the ticket.
 
