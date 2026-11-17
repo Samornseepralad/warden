@@ -80,6 +80,25 @@ Always. As soon as the ticket's TCs exist in Qase, put them in a Test plan. One 
 - **Glossary:** English-term-first. Use the ticket's own wording (keep English where the ticket writes English: checkbox, badge, dropdown, permission, scope, role, account, login, tab, filter, status). Do not raise glossary-vs-ticket collisions as questions; still show the term table for information.
 - **No Figma / PRD link in the ticket = absent.** Do not ask for them. Record "no Figma / no PRD" in the pre-draft review and Remark. The prototype (see "Ticket review") is still compared with the ticket.
 
+## Review sign-off
+Runs only from `/tc-pyr xxx review`, after the user's Approve (and after the four-place update when there were fixes). Values come from the `Config` tab of the Tracking sheet: `DISCORD_QA_CHANNEL`, `DISCORD_PO_CHANNEL`, `PO_MENTIONS` (the PO mentions exactly as Discord needs them, e.g. the role and the PO person). A missing key → ask once, never guess. Discord tools come from the Discord MCP; if it is not connected, do steps (a) and (b), then give the two messages as ready-to-paste text and say Discord was not reachable. Never use another route.
+
+1. **Summary column F.** In the tab `Summary` of the Tracking sheet, find the row whose `Ticket No.` is `PYR-xxx` and set column F ("Review Test case by QA") to `QA-REVIEWED`. Change only that cell. Column G (PO/BA review) stays as it is.
+2. **Reply `Passed` in the existing Discord thread.** In `DISCORD_QA_CHANNEL`, find the thread / message that already exists for `PYR-xxx` (by the key in its title or first message) and reply with exactly `Passed`. If none exists, do not create one: say so and give the text.
+3. **Ask the PO to review.** Post one message in `DISCORD_PO_CHANNEL`, in this format:
+
+```
+<PO_MENTIONS> need po review tc
+• [PYR-xxx](<Jira link of the ticket>)  <Jira ticket name>
+
+Test Cases Summary: [Link](<TC link>)
+```
+
+   - The bullet text `PYR-xxx` is a hyperlink to the ticket in Jira; after it, two spaces and the **Jira ticket name** exactly as in Jira.
+   - `Link` is the hyperlink in the `TC` column (D) of that ticket's row in the `Summary` tab (the ticket's TC sheet). Read the cell hyperlink, not the cell text.
+   - One ticket per run, so one bullet. Same format as earlier posts in that channel; do not add text.
+4. Show the exact text of (2) and (3) in the sign-off gate before posting. Post nothing that was not shown and approved. Never post twice for the same ticket in one run.
+
 ## Review-TC overlay
 Used by `/tc-pyr xxx review` (Helix `tc-review-workflow` with this overlay). Review the TCs of one ticket against **the prototype for layout and flow, and the ticket for all wording and rules**, plus the PYR format rules. The review itself writes nothing and posts no Jira comment. Fixable findings become a fix proposal; after the user's explicit Approve the fixes are applied to **all four places** (Qase TC → Test plan → Drive sheet → tracking sheet, the `update` flow). Findings that need the PO are never applied.
 
