@@ -33,10 +33,10 @@ Read [references/pyr.md](references/pyr.md). Its rules override the generic Heli
 ## Step 2 — Create (default job)
 
 1. Announce one line: `Using **tc-pyr** → PYR-783 · create.`
-2. Fetch the ticket from Jira (summary = the **ticket name**, AC/EC, Jira link). Run the profile's "Ticket review": compare the ticket with the prototype (and Figma / PRD only if linked; absent = absent). Keep the mismatch list for the HTML gate.
+2. Fetch the ticket from Jira (summary = the **ticket name**, AC/EC, Jira link). Run the profile's "Ticket review": compare the ticket with the prototype (and Figma / PRD only if linked; absent = absent). Also run the profile's **Scope check**: list AC/EC that belong to another card (per the ticket's "ไม่อยู่ใน ticket นี้:" section) or go beyond the ticket scope, as short bullets. Keep both lists for the HTML gate.
 3. Reuse check (profile "Reuse rule"): existing Drive subfolder + sheet, Qase cases / suite, Qase Test plan for this key. Update in place; never duplicate.
 4. Delegate TC writing to Helix `tc-fe-prep-workflow` (UI story) or `tc-api-prep-workflow` (API / Swagger) and follow it completely, with the profile as overlay.
-5. **Review gate (HTML).** Write the drafted TCs to a local file `PYR-783-tc-draft.html` (scratchpad, not published) and open it for the user. Show: ticket key + name, TC count per Type, every TC in final order with ID, Title, Type, Precondition, Test Data, Steps, Expected Result, and the ticket-vs-prototype mismatches (`ticket says` vs `prototype shows`), and the planned targets (Qase suite, Test plan title `PYR-783 <ticket name>`, Drive folder, tracking row). Then ask once: `Approve / แก้ไข?`
+5. **Review gate (HTML).** Write the drafted TCs to a local file `PYR-783-tc-draft.html` (scratchpad, not published) and open it for the user. Show: ticket key + name, TC count per Type, every TC in final order with ID, Title, Type, Precondition, Test Data, Steps, Expected Result, and the a section **ต้องถาม PO** (the scope-check bullets, each with include / exclude for the user to pick; flagged items get no TC until included), ticket-vs-prototype mismatches (`ticket says` vs `prototype shows`), and the planned targets (Qase suite, Test plan title `PYR-783 <ticket name>`, Drive folder, tracking row). Then ask once: `Approve / แก้ไข?`
    - **Approve** → go to step 6. Nothing was written to Qase, Drive or the tracking sheet before this point.
    - **แก้ไข** → apply the user's changes to the draft, regenerate the HTML, ask again. Loop until approved.
    - No approval = no write. Silence or a question is not approval.
@@ -88,6 +88,7 @@ Finish with one report line per step. If one step fails, say which, and do not r
 Follow Helix `references/qa-closing-shared.md`, plus:
 
 - [ ] Ticket key came from the command; profile read; ticket compared with the prototype, mismatches shown in the gate.
+- [ ] Scope check done; out-of-scope AC/EC listed for the PO and have no TC unless the user included them.
 - [ ] HTML draft shown and explicitly approved before any write.
 - [ ] Output follows the profile (Type values, ID format, wording, ordering).
 - [ ] Test plan exists once, titled `PYR-xxx <ticket name>`, holds exactly the ticket's cases, count verified.

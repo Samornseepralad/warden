@@ -32,6 +32,22 @@ Early PYR tickets have a **prototype** instead of Figma. Review the ticket again
 5. The prototype is not the test environment. Execution uses the testing env in the `Config` tab / memory, not the prototype.
 6. Never print, store or screenshot the password. Do not attach prototype screenshots that show the login form.
 
+### Scope check (AC/EC outside this ticket)
+Every PYR ticket has a section titled **"ไม่อยู่ใน ticket นี้:"**. It lists work that belongs to other cards, usually with a mention (`PYR-xxx`). The AC/EC of a ticket can still contain items that drift into that work. Before writing TCs, check every AC and EC:
+
+1. Read the "ไม่อยู่ใน ticket นี้:" section (items + mentioned cards). Missing section → say so in one line and check scope from the summary and description only.
+2. Flag an AC/EC when:
+   - **Other card**: it matches an item in that section. Name the card it belongs to.
+   - **Beyond scope**: it is not listed there but describes behavior, screen or flow that the ticket's summary and description do not cover, or that obviously belongs to another feature.
+   - Partly in scope: the in-scope part stays; flag only the extra part.
+3. Output a short bullet list, one line each, ready to forward to the PO:
+   - `AC_03 → น่าจะเป็นของ PYR-xxx (อยู่ในหัวข้อ "ไม่อยู่ใน ticket นี้"): <สั้นๆ ว่าเกี่ยวกับอะไร>`
+   - `EC_02 → เกิน scope? <สั้นๆ> — ขอ PO ยืนยันว่าอยู่ในการ์ดนี้ไหม`
+   Quote the ticket's wording for the item; no long explanation. No flags → one line: `AC/EC อยู่ใน scope ทั้งหมด`.
+4. Do not decide for the PO. Flagged AC/EC get **no TC** until the user says include (shown in the HTML review gate under "ต้องถาม PO", where the user chooses include / exclude). Never silently drop one and never silently keep one.
+5. Do not post the list to Jira or send it to anyone. The user forwards it. (PYR definition of done excludes Jira comments.)
+6. Flagged-and-excluded items are recorded in the Remark of the TC sheet: `AC_03 excluded: belongs to PYR-xxx`. If the PO later says it is in scope, add the TCs via `/tc-pyr xxx update`.
+
 ## Qase Test plan
 Always. As soon as the ticket's TCs exist in Qase, put them in a Test plan. One plan per ticket; never one plan for several tickets.
 
@@ -60,4 +76,4 @@ Always. As soon as the ticket's TCs exist in Qase, put them in a Test plan. One 
 - **No Figma / PRD link in the ticket = absent.** Do not ask for them. Record "no Figma / no PRD" in the pre-draft review and Remark. The prototype (see "Ticket review") is still compared with the ticket.
 
 ## Review-TC overlay
-Used when reviewing a PYR TC set (Helix `tc-review-workflow` with this overlay). Judge TCs against the rules above (ID format, Type values and order, equal counts, no `-`, English terms, Title starts with "ตรวจสอบ" with no expected result in it, short Precondition and Test Data, plain semi-formal wording with no special characters) in addition to AC/EC coverage and ticket-vs-prototype consistency (a TC contradicting the prototype without a recorded mismatch is a finding). Also check that the ticket's Qase Test plan exists, is titled `PYR-xxx <ticket name>`, and holds exactly the ticket's cases.
+Used when reviewing a PYR TC set (Helix `tc-review-workflow` with this overlay). Judge TCs against the rules above (ID format, Type values and order, equal counts, no `-`, English terms, Title starts with "ตรวจสอบ" with no expected result in it, short Precondition and Test Data, plain semi-formal wording with no special characters) in addition to AC/EC coverage and ticket-vs-prototype consistency (a TC for an AC/EC flagged outside scope without the user's include decision, or a TC contradicting the prototype without a recorded mismatch is a finding). Also check that the ticket's Qase Test plan exists, is titled `PYR-xxx <ticket name>`, and holds exactly the ticket's cases.
