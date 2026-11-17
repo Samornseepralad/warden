@@ -44,7 +44,7 @@ Read [references/pyr.md](references/pyr.md). Its rules override the generic Heli
 7. **Create / update the Qase Test plan** named `PYR-783 <ticket name>` with exactly these cases (profile "Qase Test plan"). Always, not on request. Verify the case count.
 8. Create the Drive subfolder + TC sheet; update the tracking sheet row.
 9. **Create sign-off** (profile "Create sign-off"): Jira `TC Status` = `DONE`; then create the Discord thread `PYR-783 <Jira name>` in the QA channel, first message = one randomly picked reviewer (Samorn / Nipit / Sujaree, never the creator) + `need review tc` + `TC: Link` to the Drive TC sheet. Stop at the first failure and say which step failed.
-10. **Question comment** (profile "Question comment"): only if open PO questions remain, ask `comment ใน Jira ไหม? (ใช่ / ไม่)`. ใช่ → Jira comment with the questions (each starting with its AC/EC), then post `<PO> มี comment <Jira comment link>` in the question channel on Discord. ไม่ → post nothing.
+10. **Question comment** (profile "Question comment"): only if open PO questions remain, ask `comment ใน Jira ไหม? (ใช่ / ไม่)`. ใช่ → Jira comment that tags the PO and lists the questions as short bullets (each starting with its AC/EC), then post `<PO> มี comment <Jira comment link>` in the question channel on Discord. ไม่ → post nothing.
 11. Stop at the definition of done. No CSV attach.
 
 ## Step 2b — Review

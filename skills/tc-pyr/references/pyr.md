@@ -96,18 +96,18 @@ TC: [Link](<Drive link of the ticket's TC sheet>)
 3. Show the thread name, the chosen reviewer and the exact body in the review gate before posting. Post nothing that was not shown and approved. The reviewer is picked when the gate is built, so the approved text is what gets posted. Never create two threads for one ticket in one run.
 
 ## Question comment
-Runs only from `/tc-pyr xxx` (create), after the Create sign-off, and only if **open questions** for the PO remain. No open questions → skip silently. Uses `DISCORD_QUESTION_CHANNEL` and `PO_MENTIONS` from the `Config` tab (missing → ask once). If the Discord MCP is not connected, post the Jira comment only if the user said yes, then give the Discord message as ready-to-paste text.
+Runs only from `/tc-pyr xxx` (create), after the Create sign-off, and only if **open questions** for the PO remain. No open questions → skip silently. Uses `DISCORD_QUESTION_CHANNEL`, `PO_MENTIONS` (Discord) and `PO_JIRA_ACCOUNT` (Jira accountId or e-mail of the PO; an e-mail is resolved with `lookupJiraAccountId`) from the `Config` tab (missing → ask once, never guess). If the Discord MCP is not connected, post the Jira comment only if the user said yes, then give the Discord message as ready-to-paste text.
 
 1. Show the exact comment text (below) and the Discord message, then ask once, in Thai: `comment ใน Jira ไหม? (ใช่ / ไม่)`. The answer covers both the Jira comment and the Discord post.
 2. **ไม่** → post nothing. The questions stay in chat for the user to forward.
 3. **ใช่** →
-   - Post a Jira comment on `PYR-xxx` (Atlassian MCP `addOrEditJiraIssueComment`) with the questions, each line starting with its AC/EC:
+   - Post a Jira comment on `PYR-xxx` (Atlassian MCP `addOrEditJiraIssueComment`). The **PO is tagged** with a real Jira mention (accountId from `PO_JIRA_ACCOUNT`) on the first line, then **short bullets**, each starting with its AC/EC:
      ```
-     คำถามสำหรับ PO (TC prep)
-     • AC_03: ...
-     • EC_02: ...
+     <PO mention> คำถามสำหรับ PO (TC prep)
+     • AC_03: <คำถามสั้นๆ ได้ใจความ>
+     • EC_02: <คำถามสั้นๆ ได้ใจความ>
      ```
-     Questions only, no other text, no mentions, no secrets.
+     Bullet rules: one line per question, one short sentence with only the ask (what is unclear, what the PO must decide). No quoted paragraphs, no background, no option lists. Only the PO is mentioned. No other text, no secrets.
    - Build the comment link from the result: `<Jira site>/browse/PYR-xxx?focusedCommentId=<comment id>`. Open check: the link must contain the new comment id.
    - Post in `DISCORD_QUESTION_CHANNEL`: `<PO_MENTIONS> มี comment <comment link>` (PO resolved to a real mention as in "Create sign-off").
 4. Post once per run. If the Jira comment fails, do not post to Discord. Stop and say which step failed.
