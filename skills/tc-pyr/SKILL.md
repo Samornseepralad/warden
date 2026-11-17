@@ -56,12 +56,12 @@ Read [references/pyr.md](references/pyr.md). Its rules override the generic Heli
 5. Report Good vs Need Improve in chat, short, findings quoted. Nothing is written yet.
 6. **Sign-off gate (always after the review).** One HTML review gate, one question. It shows:
    - the **fix proposal**, only if some finding is fixable by changing TCs: improved TCs per the findings (TC vs prototype, wording, coverage gap, format / plan; "Not in prototype" only when the user decided), changed / added / removed rows marked with their finding. Findings that need the PO (prototype vs ticket, open "not in prototype", "ต้องถาม PO") are listed, not changed.
-   - the **sign-off actions** with the exact text that will be posted (profile "Review sign-off"): Summary column F, the Discord reply `Passed`, the Discord post to PO.
+   - the **sign-off actions** with the Summary column F, the Jira `TC Status`, and the exact text that will be posted (profile "Review sign-off"): the Discord reply `Passed` and the Discord post to PO.
    Ask once: `Approve / แก้ไข?`
-   - **Approve** → in this order, stopping at the first failure and saying which step failed: (a) if there are fixes, Step 3 for all four places; (b) Summary column F = `QA-REVIEWED`; (c) reply `Passed` in the ticket's existing Discord thread; (d) post the PO review request. Do not ask again.
+   - **Approve** → in this order, stopping at the first failure and saying which step failed: (a) if there are fixes, Step 3 for all four places; (b) Summary column F = `QA-REVIEWED`; (c) Jira card field `TC Status` = `QA-REVIEWED`; (d) reply `Passed` in the ticket's existing Discord thread; (e) post the PO review request. Do not ask again.
    - **แก้ไข** → change the draft, regenerate the HTML, ask again.
    - No approval = no write and no post.
-7. Report in a few lines: what was updated (four places if fixes), column F, the two Discord posts (links), open PO questions.
+7. Report in a few lines: what was updated (four places if fixes), column F, Jira `TC Status`, the two Discord posts (links), open PO questions.
 
 ## Step 3 — Update (full sync, always all four)
 
@@ -84,7 +84,7 @@ Finish with one report line per step. If one step fails, say which, and do not r
 - MUST NOT write secrets (Qase token, prototype password, other passwords) into sheet, Qase, Jira, repo or chat. Token comes from `QASE_API_TOKEN`.
 - MUST NOT invent a rule that is not in the profile. If the profile is silent on something that changes the output, ask once and propose the answer for the team to add to the profile.
 - Automation (Playwright) is not part of this flow: do not offer to write or run it unless asked.
-- Discord and the Summary column F are touched only by the sign-off in review step 6, after Approve. No other step posts to Discord.
+- Discord, the Summary column F and the Jira `TC Status` are touched only by the sign-off in review step 6, after Approve. No other step posts to Discord.
 - Plain `/tc-review` (Helix) knows neither the PYR rules nor the prototype. To review against them, use `/tc-pyr 783 review`. Review itself writes nothing; changes happen only after the Approve in review step 6.
 
 ## Communication (shortest possible)
@@ -113,5 +113,5 @@ Follow Helix `references/qa-closing-shared.md`, plus:
 - [ ] Output follows the profile (Type values, ID format, wording, ordering).
 - [ ] Test plan exists once, titled `PYR-xxx <ticket name>`, holds exactly the ticket's cases, count verified.
 - [ ] Qase cases, Test plan, sheet and tracking row match each other.
-- [ ] Review: sign-off posts matched the approved text; column F set; nothing else posted.
+- [ ] Review: sign-off posts matched the approved text; column F and Jira `TC Status` set to `QA-REVIEWED`; nothing else posted.
 - [ ] Nothing posted outside the definition of done (and the review sign-off); no secret written anywhere.
