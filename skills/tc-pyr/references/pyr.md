@@ -20,7 +20,7 @@ Applies to every ticket with key `PYR-xxx`. Used by the `tc-pyr` skill.
 
 **`updateTCSheet`:** after a review or change, update all four, in order: Qase TCs → Qase Test plan → Drive TC sheet → tracking sheet. Confirm the ticket if ambiguous.
 
-**Definition of done:** Qase cases + Qase Test plan + Drive TC sheet + tracking sheet updated. Then report done and stop. Do NOT post a Jira comment or attach CSVs to Jira unless asked.
+**Definition of done (create):** Qase cases + Qase Test plan + Drive TC sheet + tracking sheet updated, Jira `TC Status` = `DONE`, and the Discord thread created (see "Create sign-off"). Then report done and stop. Do NOT post a Jira comment or attach CSVs to Jira unless asked; setting the `TC Status` field is not a comment.
 
 ## Ticket review (before writing TCs)
 Early PYR tickets have a **prototype** instead of Figma. **The prototype is a rough picture for developers** (how the pages look and flow), not a wording source.
@@ -79,6 +79,24 @@ Always. As soon as the ticket's TCs exist in Qase, put them in a Test plan. One 
 - **Wording source (create and review):** every button name and other UI text written in a TC (Title, Precondition, Test Data, Steps, Expected Result) is taken from the ticket only, exactly as the ticket writes it. The prototype supplies layout and flow only (which screens, in what order, which elements) and is never a wording source. If the ticket does not name a button or text, describe the action in the ticket's own words and add a `ticket ไม่ระบุชื่อปุ่ม …` line to "ต้องถาม PO" in the HTML gate; do not borrow the name.
 - **Glossary:** English-term-first. Use the ticket's own wording (keep English where the ticket writes English: checkbox, badge, dropdown, permission, scope, role, account, login, tab, filter, status). Do not raise glossary-vs-ticket collisions as questions; still show the term table for information.
 - **No Figma / PRD link in the ticket = absent.** Do not ask for them. Record "no Figma / no PRD" in the pre-draft review and Remark. The prototype (see "Ticket review") is still compared with the ticket.
+
+## Create sign-off
+Runs only from `/tc-pyr xxx` (create), after the user's Approve and after Qase cases, Test plan, Drive sheet and tracking sheet were written. Values come from the `Config` tab of the Tracking sheet: `DISCORD_QA_CHANNEL`, and one mention per QA member: `MENTION_SAMORN`, `MENTION_NIPIT`, `MENTION_SUJAREE` (each exactly as Discord needs it). A missing key → ask once, never guess. If the Discord MCP is not connected, do step 1, then give the thread title and body as ready-to-paste text and say Discord was not reachable. Never use another route.
+
+1. **Jira field `TC Status` = `DONE`.** Atlassian MCP `editJiraIssue`, `fields: {"TC Status": {"value": "DONE"}}`. Set only this field: no status change, no comment. Read the card back once and confirm.
+2. **Create a Discord thread in `DISCORD_QA_CHANNEL`.**
+   - **Thread name:** `PYR-xxx <Jira ticket name>` (the key, one space, the Jira summary exactly as in Jira; trim to Discord's 100-character limit only if it is longer).
+   - **First message:**
+
+```
+<one mention> need review tc
+TC: [Link](<Drive link of the ticket's TC sheet>)
+```
+
+   - **Reviewer: exactly one person, picked at random** from Samorn, Nipit and Sujaree, **excluding the person who created the TCs** (the person running this skill, identified from the Atlassian user and matched to one of the three; the creator is never tagged). Pick with real randomness (for example `python3 -c "import random,sys; print(random.choice(sys.argv[1:]))" A B`), not by choice. Tag one person only, never two. If the creator cannot be matched to one of the three, ask once who created them.
+   - `Link` is the Drive link of the TC sheet inside the ticket's `PYR-xxx` Drive subfolder (the same link stored in the `TC` column of the Summary tab).
+   - If a thread for `PYR-xxx` already exists in the channel, do not create a second one: say so and skip.
+3. Show the thread name, the chosen reviewer and the exact body in the review gate before posting. Post nothing that was not shown and approved. The reviewer is picked when the gate is built, so the approved text is what gets posted. Never create two threads for one ticket in one run.
 
 ## Review sign-off
 Runs only from `/tc-pyr xxx review`, after the user's Approve (and after the four-place update when there were fixes). Values come from the `Config` tab of the Tracking sheet: `DISCORD_QA_CHANNEL`, `DISCORD_PO_CHANNEL`, `PO_MENTIONS` (the PO mentions exactly as Discord needs them, e.g. the role and the PO person). A missing key → ask once, never guess. Discord tools come from the Discord MCP; if it is not connected, do steps 1 and 2, then do step 2 as well and give the two messages as ready-to-paste text and say Discord was not reachable. Never use another route.

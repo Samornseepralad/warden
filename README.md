@@ -24,6 +24,7 @@ TC review for OLS, or without PYR rules: Helix `/tc-review`.
 3. Write the TCs (Helix `tc-fe-prep-workflow` / `tc-api-prep-workflow`) with the PYR rules. Button names and UI text come from the ticket only; the prototype only guides layout and flow. A button the ticket does not name becomes a question for the PO, not a name borrowed from the prototype.
 4. **HTML draft** opens for review: TCs, mismatches, a "ต้องถาม PO" section. Reply **Approve** or **แก้ไข**. Nothing is written before Approve.
 5. On Approve: Qase TCs → Qase Test plan `PYR-xxx <ticket name>` → Drive TC sheet → tracking sheet.
+6. **Sign-off:** Jira field **TC Status** = `DONE`, then a **Discord thread** `PYR-xxx <Jira name>` in the QA channel. First message: one reviewer picked at random from Samorn, Nipit and Sujaree (never the person who created the TCs), `need review tc`, and `TC: Link` to the Drive TC sheet. The thread name and message are shown in the HTML gate before posting.
 
 ### `/tc-pyr xxx review` — review the TCs
 - Checks the TCs against the **prototype for layout and flow** and against the **ticket for all wording** (button names, UI text) and rules, plus PYR format rules and the Test plan.
@@ -143,6 +144,7 @@ Team-private values stay out of this public repo. Add to the `Config` tab (Key, 
 |---|---|
 | `VIDEO_FOLDER` | Drive folder for mp4 evidence (`/qase-run`, `/test-task`) |
 | `DISCORD_QA_CHANNEL`, `DISCORD_PO_CHANNEL` | Discord channels for the QA thread reply and the PO review request (`/tc-pyr xxx review`) |
+| `MENTION_SAMORN`, `MENTION_NIPIT`, `MENTION_SUJAREE` | Discord mention of each QA member, exactly as Discord needs it (`/tc-pyr xxx`) |
 | `PO_MENTIONS` | The PO mentions exactly as Discord needs them (role and person) |
 | `QA_REVIEWERS` | E-mails to tag for review, comma separated (`/test-task`) |
 | `PROTOTYPE_URL`, `PROTOTYPE_USER` | Pyrite prototype (see below) |
