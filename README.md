@@ -28,15 +28,24 @@ TC review for OLS, or without PYR rules: Helix `/tc-review`.
 ### `/tc-pyr xxx review` — review the TCs
 - Checks the TCs against the **prototype first**, then the ticket, plus PYR format rules and the Test plan.
 - Reports Good vs Need Improve in chat. The review itself writes nothing.
-- If some findings are fixable, it drafts the fixes in an HTML and asks once: **update everywhere?** On Approve it updates all four places (same as `update`). Findings that need the PO are listed, never applied.
+- If some findings are fixable, it drafts the fixes in an HTML and asks once: **update everywhere?** On Approve it updates all four places (same as `update`), so no separate `update` is needed afterwards. Findings that need the PO are listed, never applied.
 
 ### `/tc-pyr xxx update` — sync TC changes everywhere
 Updates, in order: Qase TCs → Test plan → Drive sheet → tracking sheet, after an HTML review and Approve.
 
-Use it for TC changes that do **not** come from `review`, for example:
-- the ticket was changed later
-- the PO answered about an AC/EC flagged as out of scope, and TCs must be added or removed
-- you edited some TCs by hand and want everything synced
+**After `review` + Approve, do not run `update` again.** `review` already updated all four places; a second run adds nothing.
+
+Use `update` for TC changes that do **not** come from `review`. Most common first:
+1. The PO answered about an AC/EC flagged as out of scope, and TCs must be added or removed (the most frequent case, because the scope check usually leaves questions for the PO).
+2. The ticket was changed later (AC/EC changed after the TCs were created or reviewed).
+3. You edited some TCs by hand (file or Qase) and want everything synced.
+
+| | `review` | `update` |
+|---|---|---|
+| Purpose | Check the whole TC set for quality | Sync a change you already know about |
+| Walks every TC in the prototype | Yes | No |
+| Updates the four places | Yes, after Approve (when there are fixable findings) | Yes, after Approve |
+| Use after the other | Never needed | Never needed after an approved review |
 
 ### `/qase-run xxx` — run the Test plan
 - Finds the plan of PYR-xxx (never creates one) and creates or reuses a Test run **named exactly like the plan**.
