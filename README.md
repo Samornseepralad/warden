@@ -6,7 +6,7 @@ Claude skills for QA test-case prep, one skill per project.
 |---|---|
 | `/tc-pyr xxx` | Prepare TCs for **PYR-xxx**: write TCs, show an HTML draft and wait for Approve, then create them in Qase (Pyrite), build the Qase Test plan `PYR-xxx <ticket name>`, fill the Drive TC sheet and tracking sheet |
 | `/tc-pyr xxx update` | `updateTCSheet`: sync all, in order: Qase TCs → Test plan → Drive sheet → tracking sheet |
-| `/tc-pyr xxx review` | Review TCs with Helix `tc-review` plus the PYR rules |
+| `/tc-pyr xxx review` | Review TCs against the prototype first, then the ticket, plus the PYR rules then proposes fixes and, on Approve, updates Qase TC, Test plan, Drive sheet and tracking sheet |
 | `/tc-pyr xxx run` | Manual execution from the TC sheet |
 | `/qase-run xxx` | Run the Qase Test plan of PYR-xxx: Test run named like the plan, one mp4 per case (named by Test Title) on Drive, link in each actual result |
 | `/test-task xxx` | Test card PYR-xxx by AC/EC: short plan table, **Approve**, mp4 per AC_xx / EC_xx, Jira comment (mp4 links), move card Done / In Progress |
@@ -15,6 +15,42 @@ Claude skills for QA test-case prep, one skill per project.
 | `/tc-ols xxxx run` | Manual execution from the TC sheet |
 
 TC review for OLS, or without PYR rules: Helix `/tc-review`.
+
+## Skills in detail
+
+### `/tc-pyr xxx` — create TCs for PYR-xxx
+1. Read the ticket from Jira (AC/EC, business rules, details).
+2. **Ticket review**: compare the ticket with the prototype (Figma / PRD only if linked; absent means absent). **Scope check**: list AC/EC that belong to another card (ticket section "ไม่อยู่ใน ticket นี้:") or go beyond the ticket, as short bullets for the PO.
+3. Write the TCs (Helix `tc-fe-prep-workflow` / `tc-api-prep-workflow`) with the PYR rules.
+4. **HTML draft** opens for review: TCs, mismatches, a "ต้องถาม PO" section. Reply **Approve** or **แก้ไข**. Nothing is written before Approve.
+5. On Approve: Qase TCs → Qase Test plan `PYR-xxx <ticket name>` → Drive TC sheet → tracking sheet.
+
+### `/tc-pyr xxx review` — review the TCs
+- Checks the TCs against the **prototype first**, then the ticket, plus PYR format rules and the Test plan.
+- Reports Good vs Need Improve in chat. The review itself writes nothing.
+- If some findings are fixable, it drafts the fixes in an HTML and asks once: **update everywhere?** On Approve it updates all four places (same as `update`). Findings that need the PO are listed, never applied.
+
+### `/tc-pyr xxx update` — sync TC changes everywhere
+Updates, in order: Qase TCs → Test plan → Drive sheet → tracking sheet, after an HTML review and Approve.
+
+Use it for TC changes that do **not** come from `review`, for example:
+- the ticket was changed later
+- the PO answered about an AC/EC flagged as out of scope, and TCs must be added or removed
+- you edited some TCs by hand and want everything synced
+
+### `/qase-run xxx` — run the Test plan
+- Finds the plan of PYR-xxx (never creates one) and creates or reuses a Test run **named exactly like the plan**.
+- Runs each case headless, records one **mp4 per case named by its Test Title**, uploads it to the Drive folder (`VIDEO_FOLDER`), and posts the result in Qase with the Drive link in the actual result.
+- Does not complete the run and does not file bugs on its own.
+
+### `/test-task xxx` — test one card by AC/EC
+- Plans tests from AC/EC (business rules and details become extra rows; out-of-scope items are listed for the PO).
+- Shows a **short plan table in chat** and waits for **Approve** before any test.
+- Records one mp4 per AC_xx / EC_xx, posts a Jira comment with bullets and mp4 links only.
+- Passed: `Test on dev: Passed`, tag the reviewers (`QA_REVIEWERS`), move the card to **Done**. Failed: `Test Failed` with mp4, tag the assignee, move the card back to **In Progress**.
+
+### `/tc-ols xxxx` — OLS
+Create TCs with the OLS rules (Core / Edge, OLS glossary), `format` (move into the release template) and `run`. No Qase Test plan for OLS yet.
 
 ## Layout
 
