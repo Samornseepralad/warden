@@ -20,7 +20,7 @@ Applies to every ticket with key `PYR-xxx`. Used by the `tc-pyr` skill.
 
 **`updateTCSheet`:** after a review or change, update all four, in order: Qase TCs → Qase Test plan → Drive TC sheet → tracking sheet. Confirm the ticket if ambiguous.
 
-**Definition of done (create):** Qase cases + Qase Test plan + Drive TC sheet + tracking sheet updated, Jira `TC Status` = `DONE`, and the Discord thread created (see "Create sign-off"). Then report done and stop. Do NOT post a Jira comment or attach CSVs to Jira unless asked; setting the `TC Status` field is not a comment.
+**Definition of done (create):** Qase cases + Qase Test plan + Drive TC sheet + tracking sheet updated, Jira `TC Status` = `DONE`, and the Discord thread created (see "Create sign-off"). Then report done and stop. Do NOT attach CSVs to Jira. A Jira comment is posted only when the user answers ใช่ to the "Question comment" prompt; setting the `TC Status` field is not a comment.
 
 ## Ticket review (before writing TCs)
 Early PYR tickets have a **prototype** instead of Figma. **The prototype is a rough picture for developers** (how the pages look and flow), not a wording source.
@@ -37,20 +37,17 @@ Review the ticket against what exists:
 6. Never print, store or screenshot the password. Do not attach prototype screenshots that show the login form.
 
 ### Scope check (AC/EC outside this ticket)
-Every PYR ticket has a section titled **"ไม่อยู่ใน ticket นี้:"**. It lists work that belongs to other cards, usually with a mention (`PYR-xxx`). The AC/EC of a ticket can still contain items that drift into that work. Before writing TCs, check every AC and EC:
+Every PYR ticket has a section titled **"ไม่อยู่ใน ticket นี้:"**. It lists work that belongs to other cards. Before writing TCs, check every AC and EC:
 
-1. Read the "ไม่อยู่ใน ticket นี้:" section (items + mentioned cards). Missing section → say so in one line and check scope from the summary and description only.
-2. Flag an AC/EC when:
-   - **Other card**: it matches an item in that section. Name the card it belongs to.
-   - **Beyond scope**: it is not listed there but describes behavior, screen or flow that the ticket's summary and description do not cover, or that obviously belongs to another feature.
-   - Partly in scope: the in-scope part stays; flag only the extra part.
-3. Output a short bullet list, one line each, ready to forward to the PO:
-   - `AC_03 → น่าจะเป็นของ PYR-xxx (อยู่ในหัวข้อ "ไม่อยู่ใน ticket นี้"): <สั้นๆ ว่าเกี่ยวกับอะไร>`
-   - `EC_02 → เกิน scope? <สั้นๆ> — ขอ PO ยืนยันว่าอยู่ในการ์ดนี้ไหม`
-   Quote the ticket's wording for the item; no long explanation. No flags → one line: `AC/EC อยู่ใน scope ทั้งหมด`.
-4. Do not decide for the PO. Flagged AC/EC get **no TC** until the user says include (shown in the HTML review gate under "ต้องถาม PO", where the user chooses include / exclude). Never silently drop one and never silently keep one.
-5. Do not post the list to Jira or send it to anyone. The user forwards it. (PYR definition of done excludes Jira comments.)
-6. Flagged-and-excluded items are recorded in the Remark of the TC sheet: `AC_03 excluded: belongs to PYR-xxx`. If the PO later says it is in scope, add the TCs via `/tc-pyr xxx update`.
+1. Read that section. Missing section → say so in one line and check scope from the summary and description only.
+2. **Listed items are cut, no questions.** An AC/EC that matches an item in "ไม่อยู่ใน ticket นี้:" gets **no TC**, is **not** asked about and is **not** written in the Remark. Show one FYI line in the HTML gate: `ตัดแล้ว: AC_03 (ของ PYR-xxx)`. If only part of an AC/EC matches, keep the in-scope part and cut the rest.
+3. **Beyond scope (not listed).** An AC/EC that is not in that section but describes behavior, screen or flow that the ticket's summary and description do not cover, or that obviously belongs to another feature, becomes a **question for the PO** (rule 4). It gets no TC until the user says include.
+4. **Every question names its AC/EC.** Each question is one short line that starts with the AC/EC it is about, and quotes the ticket's wording:
+   - `AC_03: เกิน scope? <สั้นๆ> — ขอ PO ยืนยันว่าอยู่ในการ์ดนี้ไหม`
+   - `EC_02: ticket ไม่ระบุชื่อปุ่ม … — ขอ PO ระบุ`
+   A question that concerns no AC/EC starts with `Business Rule:` (or the ticket section it comes from). Never a question without that label.
+5. Questions go to the HTML gate under "ต้องถาม PO" (include / exclude per beyond-scope item). If any question is still open after sign-off, the skill asks whether to comment it in Jira (see "Question comment").
+6. Beyond-scope items the user excluded are recorded in the Remark of the TC sheet: `AC_03 excluded: ask PO`. If the PO later says it is in scope, add the TCs via `/tc-pyr xxx update`.
 
 ## Qase Test plan
 Always. As soon as the ticket's TCs exist in Qase, put them in a Test plan. One plan per ticket; never one plan for several tickets.
@@ -98,6 +95,23 @@ TC: [Link](<Drive link of the ticket's TC sheet>)
    - If a thread for `PYR-xxx` already exists in the channel, do not create a second one: say so and skip.
 3. Show the thread name, the chosen reviewer and the exact body in the review gate before posting. Post nothing that was not shown and approved. The reviewer is picked when the gate is built, so the approved text is what gets posted. Never create two threads for one ticket in one run.
 
+## Question comment
+Runs only from `/tc-pyr xxx` (create), after the Create sign-off, and only if **open questions** for the PO remain. No open questions → skip silently. Uses `DISCORD_QUESTION_CHANNEL` and `PO_MENTIONS` from the `Config` tab (missing → ask once). If the Discord MCP is not connected, post the Jira comment only if the user said yes, then give the Discord message as ready-to-paste text.
+
+1. Show the exact comment text (below) and the Discord message, then ask once, in Thai: `comment ใน Jira ไหม? (ใช่ / ไม่)`. The answer covers both the Jira comment and the Discord post.
+2. **ไม่** → post nothing. The questions stay in chat for the user to forward.
+3. **ใช่** →
+   - Post a Jira comment on `PYR-xxx` (Atlassian MCP `addOrEditJiraIssueComment`) with the questions, each line starting with its AC/EC:
+     ```
+     คำถามสำหรับ PO (TC prep)
+     • AC_03: ...
+     • EC_02: ...
+     ```
+     Questions only, no other text, no mentions, no secrets.
+   - Build the comment link from the result: `<Jira site>/browse/PYR-xxx?focusedCommentId=<comment id>`. Open check: the link must contain the new comment id.
+   - Post in `DISCORD_QUESTION_CHANNEL`: `<PO_MENTIONS> มี comment <comment link>` (PO resolved to a real mention as in "Create sign-off").
+4. Post once per run. If the Jira comment fails, do not post to Discord. Stop and say which step failed.
+
 ## Review sign-off
 Runs only from `/tc-pyr xxx review`, after the user's Approve (and after the four-place update when there were fixes). Values come from the `Config` tab of the Tracking sheet: `DISCORD_QA_CHANNEL`, `DISCORD_PO_CHANNEL`, `PO_MENTIONS` (one or more Discord usernames or `<@id>` / role mentions, separated by spaces; usernames are resolved to real mentions through the Discord MCP as in "Create sign-off", never posted as plain text). A missing key → ask once, never guess. Discord tools come from the Discord MCP; if it is not connected, do steps 1 and 2, then do step 2 as well and give the two messages as ready-to-paste text and say Discord was not reachable. Never use another route.
 
@@ -125,7 +139,7 @@ Used by `/tc-pyr xxx review` (Helix `tc-review-workflow` with this overlay). Rev
 1. **Prototype (primary for layout and flow).** Open it headless and log in as in "Ticket review". For which screens exist, their order, and which fields, buttons and states are present and where, the prototype wins over the ticket. It is a rough picture for developers.
 2. **Ticket (the only source for wording, and for rules).** Every button name and every other UI text (labels, messages, headings) is judged against the ticket only. Prototype wording is never a reference: a TC that uses the ticket's wording is correct even if the prototype shows other words, and a TC that copies prototype wording the ticket does not state is a finding. Business rules, limits, permissions and server-side or data rules also come from the ticket.
 3. **Figma / PRD**: review against them as usual if the ticket links them; absent = absent, never ask. Where they disagree with the prototype, list it as a mismatch, do not pick a winner.
-4. Scope: AC/EC flagged by the profile's "Scope check" need the user's include decision; a TC for a flagged item without one is a finding.
+4. Scope: a TC for an AC/EC that is listed in "ไม่อยู่ใน ticket นี้:" is a finding (cut it). A TC for a beyond-scope AC/EC without the user's include decision is a finding.
 
 ### What to check
 For every TC, walk its Test Steps in the prototype and compare:

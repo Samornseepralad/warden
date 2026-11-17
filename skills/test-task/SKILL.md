@@ -18,7 +18,7 @@ metadata:
 
 1. Key = `PYR-<number>`. Missing → ask one line `PYR-?`. Non-PYR key → refuse, one line.
 2. Read the Jira card: summary, AC/EC, business rules, other details, assignee, status, comments. Read the prototype (and Figma / PRD only if linked; absent = absent, never ask) as in `tc-pyr` references/pyr.md "Ticket review" if the tc-pyr skill is installed.
-3. Scope check: apply `tc-pyr` references/pyr.md "Scope check" (section "ไม่อยู่ใน ticket นี้:"). AC/EC that belong to another card or exceed the ticket are **not planned**; list them as short bullets under the plan table (`ต้องถาม PO`) and test them only if the user includes them at Approve.
+3. Scope check: apply `tc-pyr` references/pyr.md "Scope check" (section "ไม่อยู่ใน ticket นี้:"). AC/EC listed in "ไม่อยู่ใน ticket นี้:" are cut (not planned, no question). AC/EC that exceed the ticket but are not listed are **not planned**; list them as short bullets under the plan table (`ต้องถาม PO`, each starting with its AC/EC) and test them only if the user includes them at Approve.
 4. Plan one test per in-scope AC and EC (`AC_01`, `EC_01`, … exactly as the ticket labels them). Anything in business rules or details that adds behavior and has no AC/EC → extra planned rows, marked `extra`.
 
 ## Step 2 — Show the plan, wait for Approve (always)

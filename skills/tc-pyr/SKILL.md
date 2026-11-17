@@ -33,7 +33,7 @@ Read [references/pyr.md](references/pyr.md). Its rules override the generic Heli
 ## Step 2 — Create (default job)
 
 1. Announce one line: `Using **tc-pyr** → PYR-783 · create.`
-2. Fetch the ticket from Jira (summary = the **ticket name**, AC/EC, Jira link). Run the profile's "Ticket review": compare the ticket with the prototype (and Figma / PRD only if linked; absent = absent). Also run the profile's **Scope check**: list AC/EC that belong to another card (per the ticket's "ไม่อยู่ใน ticket นี้:" section) or go beyond the ticket scope, as short bullets. Keep both lists for the HTML gate.
+2. Fetch the ticket from Jira (summary = the **ticket name**, AC/EC, Jira link). Run the profile's "Ticket review": compare the ticket with the prototype (and Figma / PRD only if linked; absent = absent). Also run the profile's **Scope check**: AC/EC listed in the ticket's "ไม่อยู่ใน ticket นี้:" section are cut (no TC, no question); AC/EC beyond the ticket scope become questions for the PO, every question starting with its AC/EC. Keep both lists for the HTML gate.
 3. Reuse check (profile "Reuse rule"): existing Drive subfolder + sheet, Qase cases / suite, Qase Test plan for this key. Update in place; never duplicate.
 4. Delegate TC writing to Helix `tc-fe-prep-workflow` (UI story) or `tc-api-prep-workflow` (API / Swagger) and follow it completely, with the profile as overlay. **Wording:** every button name and UI text in the TCs comes from the ticket only; the prototype informs layout and flow (step order, which elements exist), never wording. A button or text the ticket does not name is not borrowed from the prototype: write the action in the ticket's words and put a `ticket ไม่ระบุชื่อปุ่ม …` bullet in the gate's **ต้องถาม PO** section.
 5. **Review gate (HTML).** Write the drafted TCs to a local file `PYR-783-tc-draft.html` (scratchpad, not published) and open it for the user. Show: ticket key + name, TC count per Type, every TC in final order with ID, Title, Type, Precondition, Test Data, Steps, Expected Result, and the a section **ต้องถาม PO** (the scope-check bullets, each with include / exclude for the user to pick; flagged items get no TC until included), ticket-vs-prototype mismatches (`ticket says` vs `prototype shows`), the sign-off actions (Jira `TC Status` = `DONE`, the Discord thread name, the randomly picked reviewer and the exact first message), and the planned targets (Qase suite, Test plan title `PYR-783 <ticket name>`, Drive folder, tracking row). Then ask once: `Approve / แก้ไข?`
@@ -44,7 +44,8 @@ Read [references/pyr.md](references/pyr.md). Its rules override the generic Heli
 7. **Create / update the Qase Test plan** named `PYR-783 <ticket name>` with exactly these cases (profile "Qase Test plan"). Always, not on request. Verify the case count.
 8. Create the Drive subfolder + TC sheet; update the tracking sheet row.
 9. **Create sign-off** (profile "Create sign-off"): Jira `TC Status` = `DONE`; then create the Discord thread `PYR-783 <Jira name>` in the QA channel, first message = one randomly picked reviewer (Samorn / Nipit / Sujaree, never the creator) + `need review tc` + `TC: Link` to the Drive TC sheet. Stop at the first failure and say which step failed.
-10. Stop at the definition of done. No Jira comment, no CSV attach unless the user asks.
+10. **Question comment** (profile "Question comment"): only if open PO questions remain, ask `comment ใน Jira ไหม? (ใช่ / ไม่)`. ใช่ → Jira comment with the questions (each starting with its AC/EC), then post `<PO> มี comment <Jira comment link>` in the question channel on Discord. ไม่ → post nothing.
+11. Stop at the definition of done. No CSV attach.
 
 ## Step 2b — Review
 
@@ -102,7 +103,7 @@ Finish with one report line per step. If one step fails, say which, and do not r
 |---|---|
 | OLS key or no key | Refuse, one line: `tc-ols` for OLS, ask for the number otherwise. |
 | Review TCs without the PYR rules | Use Helix `tc-review`; for PYR rules use `/tc-pyr 783 review`. |
-| Post a Jira comment | Refuse; PYR definition of done excludes it unless the user explicitly asks. |
+| Post a Jira comment | Refuse, except the question comment the user approved with ใช่ in create (profile "Question comment"). Any other Jira comment only if the user explicitly asks. |
 | File bug, retest, test data | Route to `create-bug-workflow`, `retest-bug-workflow`, `test-data-prep-workflow`. |
 
 ## QA closing (mandatory before "done")
@@ -110,7 +111,8 @@ Finish with one report line per step. If one step fails, say which, and do not r
 Follow Helix `references/qa-closing-shared.md`, plus:
 
 - [ ] Ticket key came from the command; profile read; ticket compared with the prototype (layout / flow), mismatches shown in the gate; all wording taken from the ticket.
-- [ ] Scope check done; out-of-scope AC/EC listed for the PO and have no TC unless the user included them.
+- [ ] Scope check done; AC/EC listed under "ไม่อยู่ใน ticket นี้:" cut without questions; beyond-scope AC/EC have no TC unless included; every question starts with its AC/EC.
+- [ ] Jira comment and Discord post only if the user answered ใช่, with the comment link in the Discord message.
 - [ ] HTML draft shown and explicitly approved before any write.
 - [ ] Output follows the profile (Type values, ID format, wording, ordering).
 - [ ] Test plan exists once, titled `PYR-xxx <ticket name>`, holds exactly the ticket's cases, count verified.
