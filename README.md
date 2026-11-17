@@ -111,7 +111,28 @@ Add to `~/.claude/settings.json` (merge into an existing `hooks` block if you ha
 
 - Keep your clone on `main` with no local edits. A fast-forward-only pull never overwrites local work; if it cannot pull, it silently skips.
 - Because the skills are symlinks into the clone, the pulled files are used right away.
-- Not on the latest? Run `git -C <your-clone> pull` by hand.
+- Not on the latest? Run `warden-up` (below) or `git -C <your-clone> pull` by hand.
+
+### Quick update: `warden-up`
+
+Add to `~/.zshrc` (or `~/.bashrc`). Pulls the latest `main` and links any **new** skill folders (the hook above does not link new skills):
+
+```bash
+alias warden-up='git -C ~/GitHub/warden pull --ff-only && for d in ~/GitHub/warden/skills/*; do ln -sfn "$d" ~/.claude/skills/$(basename "$d"); done'
+```
+
+Use both: the hook for the routine pull, `warden-up` when a release adds a skill or when you want it right now.
+
+### Limits
+- Setup is once per person and per machine; nobody can set it up for another machine.
+- macOS and Linux with zsh or bash. Windows needs different commands.
+- The hook and alias assume the clone is at `~/GitHub/warden`. Change the path if yours differs.
+- `--ff-only` never overwrites local work. If the clone is not on `main` or has local edits, it does nothing.
+- Each machine also needs its own `ffmpeg`, Playwright, Qase token and prototype password file.
+
+### After updating: which tab sees it
+- **Claude Code sessions**: all sessions on the machine read the same files (skills are symlinks). An open session picks up edited content of an existing skill the next time it is invoked. A **new skill** or a changed skill **description** needs a new session, because the skill list is loaded at session start. The hook runs at session start only. When unsure, restart Claude Code.
+- **Terminal tabs**: the alias applies to tabs opened after you edit `~/.zshrc`; in an open tab run `source ~/.zshrc` first.
 
 ## Team settings in the Tracking sheet
 
