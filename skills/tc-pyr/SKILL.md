@@ -23,7 +23,7 @@ metadata:
 | `/tc-pyr 783` | Ticket `PYR-783`, job **create** |
 | `/tc-pyr 783 update` or `updateTCSheet` | Job **update**: apply changed TCs everywhere |
 | `/tc-pyr 783 run` | Job **run**: manual execution, [references/execute.md](references/execute.md) |
-| `/tc-pyr 783 review` | Job **review**: Helix `tc-review-workflow` + the profile's "Review-TC overlay": TCs checked against the **prototype first**, then the ticket, plus PYR format rules |
+| `/tc-pyr 783 review` | Job **review**: Helix `tc-review-workflow` + the profile's "Review-TC overlay": TCs checked against the **prototype for layout and flow**, and the **ticket for all wording**, plus PYR format rules |
 | `/tc-pyr PYR-783` | Same as `783` |
 | Number missing | Ask one line: `PYR-?` |
 | Another project's key (OLS-xxx …) | Refuse in one line, route to `tc-ols` |
@@ -52,7 +52,7 @@ Read [references/pyr.md](references/pyr.md). Its rules override the generic Heli
 1. Announce one line: `Using **tc-pyr** → PYR-783 · review.`
 2. Load the ticket's TCs (Qase suite / Drive sheet) and the ticket (AC/EC, business rules, "ไม่อยู่ใน ticket นี้:").
 3. Open the prototype headless (profile "Targets") and walk every TC's steps in it.
-4. Run Helix `tc-review-workflow` with the profile's "Review-TC overlay": **prototype is the primary source, then the ticket**; classify findings as the overlay says.
+4. Run Helix `tc-review-workflow` with the profile's "Review-TC overlay": **prototype for layout and flow, ticket for all wording (button names and UI text) and rules**; classify findings as the overlay says.
 5. Report Good vs Need Improve in chat, short, findings quoted. Nothing is written yet.
 6. **Fix proposal (only if some finding is fixable by changing TCs).** Draft the improved TCs per the findings (TC vs prototype, coverage gap, format / plan; also "Not in prototype" only when the user decided). Findings that need the PO (prototype vs ticket, open "not in prototype") are listed, not changed. Show the changes in the HTML review gate (changed / added / removed rows marked, each with its finding) and ask once: `Update ทุกที่ (Qase TC → Test plan → Drive sheet → tracking sheet)? Approve / แก้ไข`
    - **Approve** → run Step 3 for all four places, without asking again.
@@ -73,6 +73,7 @@ Finish with one report line per step. If one step fails, say which, and do not r
 ## Rules
 
 - MUST take the ticket key from the command. Never guess it.
+- MUST take every button name and UI text from the ticket only. The prototype is a rough picture for developers (layout and flow); never copy its wording.
 - MUST show the HTML review gate and get explicit Approve before the first write to Qase, Drive or the tracking sheet (create, update and review fixes).
 - MUST create or update the Test plan after every create / update, titled `PYR-xxx <ticket name>`.
 - MUST keep Qase cases, Test plan, Drive sheet and any other artifact of one ticket identical.
@@ -101,7 +102,7 @@ Finish with one report line per step. If one step fails, say which, and do not r
 
 Follow Helix `references/qa-closing-shared.md`, plus:
 
-- [ ] Ticket key came from the command; profile read; ticket compared with the prototype, mismatches shown in the gate.
+- [ ] Ticket key came from the command; profile read; ticket compared with the prototype (layout / flow), mismatches shown in the gate; all wording taken from the ticket.
 - [ ] Scope check done; out-of-scope AC/EC listed for the PO and have no TC unless the user included them.
 - [ ] HTML draft shown and explicitly approved before any write.
 - [ ] Output follows the profile (Type values, ID format, wording, ordering).

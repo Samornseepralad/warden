@@ -23,12 +23,16 @@ Applies to every ticket with key `PYR-xxx`. Used by the `tc-pyr` skill.
 **Definition of done:** Qase cases + Qase Test plan + Drive TC sheet + tracking sheet updated. Then report done and stop. Do NOT post a Jira comment or attach CSVs to Jira unless asked.
 
 ## Ticket review (before writing TCs)
-Early PYR tickets have a **prototype** instead of Figma. Review the ticket against what exists:
+Early PYR tickets have a **prototype** instead of Figma. **The prototype is a rough picture for developers** (how the pages look and flow), not a wording source.
 
-1. **Prototype (always)**: open it in a headless browser, log in with `PYR_PROTOTYPE_USER` / `PYR_PROTOTYPE_PASSWORD`, walk the screens the ticket touches. Compare each AC/EC with the prototype: labels, fields, buttons, states, validation messages, flow order.
+**Wording rule (always):** every button name, and every other UI text (labels, messages, headings), comes **from the ticket only**. Never copy wording from the prototype into a TC. A different wording in the prototype is **not** a mismatch and is not reported. If the ticket does not name a button or text that a TC needs, do not borrow it from the prototype: describe the action in the ticket's own words and list it as a question for the PO (`ticket ไม่ระบุชื่อปุ่ม …`).
+
+Review the ticket against what exists:
+
+1. **Prototype (always)**: open it in a headless browser, log in with `PYR_PROTOTYPE_USER` / `PYR_PROTOTYPE_PASSWORD`, walk the screens the ticket touches. Compare each AC/EC with the prototype for **layout and flow only**: which screens exist, their order, which fields / buttons / states are present and where. Ignore its wording.
 2. **Figma / PRD**: if the ticket links one, review against it as usual. If it does not, it is absent: do not ask, record "no Figma" / "no PRD" in the pre-draft review and Remark.
-3. **Findings**: list every mismatch as `ticket says` vs `prototype shows` (screen, element), plus anything in the prototype the ticket does not mention and anything in the ticket the prototype lacks. Never silently pick one side.
-4. **Source of truth for TCs**: ticket AC/EC first. A TC for behavior that only the prototype shows is marked "from prototype" in Remark. An open mismatch is shown in the HTML review gate for the user to decide; do not ask separately.
+3. **Findings**: list every mismatch in layout / flow / presence of elements as `ticket says` vs `prototype shows` (screen, element) (never wording), plus anything in the prototype the ticket does not mention and anything in the ticket the prototype lacks. Never silently pick one side.
+4. **Source of truth for TCs**: ticket AC/EC first, and the ticket alone for all wording. A TC for behavior that only the prototype shows is marked "from prototype" in Remark. An open mismatch is shown in the HTML review gate for the user to decide; do not ask separately.
 5. The prototype is not the test environment. Execution uses the testing env in the `Config` tab / memory, not the prototype.
 6. Never print, store or screenshot the password. Do not attach prototype screenshots that show the login form.
 
@@ -76,20 +80,20 @@ Always. As soon as the ticket's TCs exist in Qase, put them in a Test plan. One 
 - **No Figma / PRD link in the ticket = absent.** Do not ask for them. Record "no Figma / no PRD" in the pre-draft review and Remark. The prototype (see "Ticket review") is still compared with the ticket.
 
 ## Review-TC overlay
-Used by `/tc-pyr xxx review` (Helix `tc-review-workflow` with this overlay). Review the TCs of one ticket against **the prototype first, then the ticket**, plus the PYR format rules. The review itself writes nothing and posts no Jira comment. Fixable findings become a fix proposal; after the user's explicit Approve the fixes are applied to **all four places** (Qase TC → Test plan → Drive sheet → tracking sheet, the `update` flow). Findings that need the PO are never applied.
+Used by `/tc-pyr xxx review` (Helix `tc-review-workflow` with this overlay). Review the TCs of one ticket against **the prototype for layout and flow, and the ticket for all wording and rules**, plus the PYR format rules. The review itself writes nothing and posts no Jira comment. Fixable findings become a fix proposal; after the user's explicit Approve the fixes are applied to **all four places** (Qase TC → Test plan → Drive sheet → tracking sheet, the `update` flow). Findings that need the PO are never applied.
 
 ### Sources and precedence
-1. **Prototype (primary).** Open it headless and log in as in "Ticket review". For what a user sees and does (screens, labels, fields, buttons, states, validation messages, flow order) the prototype wins over the ticket.
-2. **Ticket** (AC/EC, business rules, details): wins only for rules the prototype cannot show (server-side or data rules, limits, permissions).
+1. **Prototype (primary for layout and flow).** Open it headless and log in as in "Ticket review". For which screens exist, their order, and which fields, buttons and states are present and where, the prototype wins over the ticket. It is a rough picture for developers.
+2. **Ticket (the only source for wording, and for rules).** Every button name and every other UI text (labels, messages, headings) is judged against the ticket only. Prototype wording is never a reference: a TC that uses the ticket's wording is correct even if the prototype shows other words, and a TC that copies prototype wording the ticket does not state is a finding. Business rules, limits, permissions and server-side or data rules also come from the ticket.
 3. **Figma / PRD**: review against them as usual if the ticket links them; absent = absent, never ask. Where they disagree with the prototype, list it as a mismatch, do not pick a winner.
 4. Scope: AC/EC flagged by the profile's "Scope check" need the user's include decision; a TC for a flagged item without one is a finding.
 
 ### What to check
 For every TC, walk its Test Steps in the prototype and compare:
-- **Steps doable**: each step can be done in the prototype in that order; element names match what is on screen (same wording).
-- **Expected Result** matches what the prototype shows or does (text, state, navigation).
+- **Steps doable**: each step can be done in the prototype in that order; the elements the step uses are present in the prototype (judge presence and place, not wording). Element names in the TC must match the ticket's wording.
+- **Expected Result** matches what the prototype shows or does in state and navigation, and uses the ticket's wording for any text.
 - **Test Data** is something the prototype accepts or rejects as the TC says.
-- **Coverage**: every flow, field, state and message in the prototype for this ticket has a TC; every in-scope AC/EC has a TC.
+- **Coverage**: every flow, field, state and message case in the prototype for this ticket has a TC; every in-scope AC/EC has a TC.
 - **Format** (PYR rules above): ID `TC-01`, Type values and order, equal Test Data / Step / Expected counts, no `-`, English terms per ticket, Title starts with "ตรวจสอบ" with no expected result in it, short Precondition and Test Data, plain semi-formal wording with no special characters.
 - **Plan**: the ticket's Qase Test plan exists once, is titled `PYR-xxx <ticket name>`, and holds exactly the ticket's cases; Qase cases, sheet and tracking row match.
 
@@ -98,11 +102,12 @@ Classify each finding, one line each, with sources quoted:
 
 | Class | Meaning | Fix |
 |---|---|---|
-| TC vs prototype | The TC contradicts or cannot be done in the prototype | Change the TC to follow the prototype |
-| Prototype vs ticket | Prototype and ticket disagree | Not a TC defect. List for the PO. TC follows the prototype and Remark records the mismatch |
+| TC vs prototype | The TC contradicts or cannot be done in the prototype's layout or flow | Change the TC to follow the prototype |
+| Wording | A TC button name or UI text differs from the ticket, or is copied from the prototype and not stated in the ticket | Change the TC to the ticket's wording; if the ticket is silent, ask the PO |
+| Prototype vs ticket | Prototype and ticket disagree on layout, flow or presence of elements (never wording) | Not a TC defect. List for the PO. TC follows the prototype and Remark records the mismatch |
 | Coverage gap | Prototype or AC/EC behavior has no TC | Add a TC |
 | Not in prototype | TC covers something the prototype does not show | Keep only if the ticket states it as a rule the prototype cannot show; otherwise ask the PO |
 | Cannot verify | The prototype cannot reach that state (e.g. server error) | Not a defect; say it was not checked against the prototype |
 | Format / plan | Breaks a rule in "TC format rules" or the plan rules | Fix as the rule says |
 
-Each finding: TC ID, the quoted TC text, `prototype shows` (screen and element), and the ticket quote when relevant. Report **Good** vs **Need Improve** as the Helix workflow does, with counts per class; keep it short. Never rewrite a TC silently to make it pass; every change goes through the Approve gate.
+Each finding: TC ID, the quoted TC text, `prototype shows` (screen and element) for layout and flow findings, and the ticket quote for every wording finding. Report **Good** vs **Need Improve** as the Helix workflow does, with counts per class; keep it short. Never rewrite a TC silently to make it pass; every change goes through the Approve gate.
