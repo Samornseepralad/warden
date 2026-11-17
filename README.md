@@ -29,6 +29,7 @@ TC review for OLS, or without PYR rules: Helix `/tc-review`.
 - Checks the TCs against the **prototype for layout and flow** and against the **ticket for all wording** (button names, UI text) and rules, plus PYR format rules and the Test plan.
 - Reports Good vs Need Improve in chat. The review itself writes nothing.
 - If some findings are fixable, it drafts the fixes in an HTML and asks once: **update everywhere?** On Approve it updates all four places (same as `update`), so no separate `update` is needed afterwards. Findings that need the PO are listed, never applied.
+- **Sign-off (after Approve):** sets the `Summary` tab column F of the ticket's row and the Jira card field **TC Status** to `QA-REVIEWED`, replies `Passed` in the ticket's existing Discord thread (QA channel), and posts the PO review request in the PO channel (`@PO need po review tc`, bullet `PYR-xxx` Jira link + Jira name, `Test Cases Summary: Link`). The exact messages are shown in the HTML gate before posting. Without a Discord connection, the messages are given as text to paste.
 
 ### `/tc-pyr xxx update` — sync TC changes everywhere
 Updates, in order: Qase TCs → Test plan → Drive sheet → tracking sheet, after an HTML review and Approve.
@@ -141,6 +142,8 @@ Team-private values stay out of this public repo. Add to the `Config` tab (Key, 
 | Key | Value |
 |---|---|
 | `VIDEO_FOLDER` | Drive folder for mp4 evidence (`/qase-run`, `/test-task`) |
+| `DISCORD_QA_CHANNEL`, `DISCORD_PO_CHANNEL` | Discord channels for the QA thread reply and the PO review request (`/tc-pyr xxx review`) |
+| `PO_MENTIONS` | The PO mentions exactly as Discord needs them (role and person) |
 | `QA_REVIEWERS` | E-mails to tag for review, comma separated (`/test-task`) |
 | `PROTOTYPE_URL`, `PROTOTYPE_USER` | Pyrite prototype (see below) |
 
