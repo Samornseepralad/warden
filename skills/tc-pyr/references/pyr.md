@@ -76,4 +76,33 @@ Always. As soon as the ticket's TCs exist in Qase, put them in a Test plan. One 
 - **No Figma / PRD link in the ticket = absent.** Do not ask for them. Record "no Figma / no PRD" in the pre-draft review and Remark. The prototype (see "Ticket review") is still compared with the ticket.
 
 ## Review-TC overlay
-Used when reviewing a PYR TC set (Helix `tc-review-workflow` with this overlay). Judge TCs against the rules above (ID format, Type values and order, equal counts, no `-`, English terms, Title starts with "ตรวจสอบ" with no expected result in it, short Precondition and Test Data, plain semi-formal wording with no special characters) in addition to AC/EC coverage and ticket-vs-prototype consistency (a TC for an AC/EC flagged outside scope without the user's include decision, or a TC contradicting the prototype without a recorded mismatch is a finding). Also check that the ticket's Qase Test plan exists, is titled `PYR-xxx <ticket name>`, and holds exactly the ticket's cases.
+Used by `/tc-pyr xxx review` (Helix `tc-review-workflow` with this overlay). Review the TCs of one ticket against **the prototype first, then the ticket**, plus the PYR format rules. Review only: never edit TCs, Qase, the plan or the sheet here (fixes go through `/tc-pyr xxx update`); no Jira comment.
+
+### Sources and precedence
+1. **Prototype (primary).** Open it headless and log in as in "Ticket review". For what a user sees and does (screens, labels, fields, buttons, states, validation messages, flow order) the prototype wins over the ticket.
+2. **Ticket** (AC/EC, business rules, details): wins only for rules the prototype cannot show (server-side or data rules, limits, permissions).
+3. **Figma / PRD**: review against them as usual if the ticket links them; absent = absent, never ask. Where they disagree with the prototype, list it as a mismatch, do not pick a winner.
+4. Scope: AC/EC flagged by the profile's "Scope check" need the user's include decision; a TC for a flagged item without one is a finding.
+
+### What to check
+For every TC, walk its Test Steps in the prototype and compare:
+- **Steps doable**: each step can be done in the prototype in that order; element names match what is on screen (same wording).
+- **Expected Result** matches what the prototype shows or does (text, state, navigation).
+- **Test Data** is something the prototype accepts or rejects as the TC says.
+- **Coverage**: every flow, field, state and message in the prototype for this ticket has a TC; every in-scope AC/EC has a TC.
+- **Format** (PYR rules above): ID `TC-01`, Type values and order, equal Test Data / Step / Expected counts, no `-`, English terms per ticket, Title starts with "ตรวจสอบ" with no expected result in it, short Precondition and Test Data, plain semi-formal wording with no special characters.
+- **Plan**: the ticket's Qase Test plan exists once, is titled `PYR-xxx <ticket name>`, and holds exactly the ticket's cases; Qase cases, sheet and tracking row match.
+
+### Findings
+Classify each finding, one line each, with sources quoted:
+
+| Class | Meaning | Fix |
+|---|---|---|
+| TC vs prototype | The TC contradicts or cannot be done in the prototype | Change the TC to follow the prototype |
+| Prototype vs ticket | Prototype and ticket disagree | Not a TC defect. List for the PO. TC follows the prototype and Remark records the mismatch |
+| Coverage gap | Prototype or AC/EC behavior has no TC | Add a TC |
+| Not in prototype | TC covers something the prototype does not show | Keep only if the ticket states it as a rule the prototype cannot show; otherwise ask the PO |
+| Cannot verify | The prototype cannot reach that state (e.g. server error) | Not a defect; say it was not checked against the prototype |
+| Format / plan | Breaks a rule in "TC format rules" or the plan rules | Fix as the rule says |
+
+Each finding: TC ID, the quoted TC text, `prototype shows` (screen and element), and the ticket quote when relevant. Report **Good** vs **Need Improve** as the Helix workflow does, with counts per class; keep it short. Never rewrite a TC silently to make it pass.

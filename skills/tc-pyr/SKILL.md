@@ -23,7 +23,7 @@ metadata:
 | `/tc-pyr 783` | Ticket `PYR-783`, job **create** |
 | `/tc-pyr 783 update` or `updateTCSheet` | Job **update**: apply changed TCs everywhere |
 | `/tc-pyr 783 run` | Job **run**: manual execution, [references/execute.md](references/execute.md) |
-| `/tc-pyr 783 review` | Job **review**: Helix `tc-review-workflow` + the profile's "Review-TC overlay" (PYR rules) |
+| `/tc-pyr 783 review` | Job **review**: Helix `tc-review-workflow` + the profile's "Review-TC overlay": TCs checked against the **prototype first**, then the ticket, plus PYR format rules |
 | `/tc-pyr PYR-783` | Same as `783` |
 | Number missing | Ask one line: `PYR-?` |
 | Another project's key (OLS-xxx …) | Refuse in one line, route to `tc-ols` |
@@ -45,6 +45,16 @@ Read [references/pyr.md](references/pyr.md). Its rules override the generic Heli
 8. Create the Drive subfolder + TC sheet; update the tracking sheet row.
 9. Stop at the definition of done. No Jira comment, no CSV attach unless the user asks.
 
+## Step 2b — Review
+
+`/tc-pyr 783 review`:
+
+1. Announce one line: `Using **tc-pyr** → PYR-783 · review.`
+2. Load the ticket's TCs (Qase suite / Drive sheet) and the ticket (AC/EC, business rules, "ไม่อยู่ใน ticket นี้:").
+3. Open the prototype headless (profile "Targets") and walk every TC's steps in it.
+4. Run Helix `tc-review-workflow` with the profile's "Review-TC overlay": **prototype is the primary source, then the ticket**; classify findings as the overlay says.
+5. Report Good vs Need Improve in chat, short, findings quoted. Review only: change nothing, post nothing. Offer the fix path in one line: `/tc-pyr 783 update`.
+
 ## Step 3 — Update (full sync, always all four)
 
 `/tc-pyr 783 update` updates **everything**. First show the changed TCs in the same HTML review gate (changed / added / removed rows marked) and wait for **Approve**. Then, in this order, no skipping:
@@ -65,7 +75,7 @@ Finish with one report line per step. If one step fails, say which, and do not r
 - MUST NOT write secrets (Qase token, prototype password, other passwords) into sheet, Qase, Jira, repo or chat. Token comes from `QASE_API_TOKEN`.
 - MUST NOT invent a rule that is not in the profile. If the profile is silent on something that changes the output, ask once and propose the answer for the team to add to the profile.
 - Automation (Playwright) is not part of this flow: do not offer to write or run it unless asked.
-- Plain `/tc-review` (Helix) does not know the PYR rules. To review against them, use `/tc-pyr 783 review`.
+- Plain `/tc-review` (Helix) knows neither the PYR rules nor the prototype. To review against them, use `/tc-pyr 783 review`. Review never changes TCs.
 
 ## Communication (shortest possible)
 
