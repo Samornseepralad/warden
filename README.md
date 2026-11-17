@@ -8,6 +8,8 @@ Claude skills for QA test-case prep, one skill per project.
 | `/tc-pyr 783 update` | `updateTCSheet`: sync all, in order: Qase TCs → Test plan → Drive sheet → tracking sheet |
 | `/tc-pyr 783 review` | Review TCs with Helix `tc-review` plus the PYR rules |
 | `/tc-pyr 783 run` | Manual execution from the TC sheet |
+| `/qase-run 783` | Run the Qase Test plan of PYR-783: Test run named like the plan, one mp4 per case (named by Test Title) on Drive, link in each actual result |
+| `/test-task 783` | Test card PYR-783 by AC/EC: short plan table, **Approve**, mp4 per AC_xx / EC_xx, Jira comment (mp4 links), move card Done / In Progress |
 | `/tc-ols 1234` | Prepare TCs for **OLS-1234** with the OLS rules (Core / Edge, OLS glossary) |
 | `/tc-ols 1234 format` | Move OLS TCs into the release template |
 | `/tc-ols 1234 run` | Manual execution from the TC sheet |
@@ -19,6 +21,8 @@ TC review for OLS, or without PYR rules: Helix `/tc-review`.
 ```
 skills/tc-pyr/   SKILL.md + references/{pyr,execute}.md
 skills/tc-ols/   SKILL.md + references/{ols,execute}.md
+skills/qase-run/ SKILL.md + references/video-evidence.md
+skills/test-task/ SKILL.md + references/video-evidence.md   (video-evidence.md copies must stay identical)
 ```
 
 ## Prerequisite: Helix
@@ -29,11 +33,10 @@ Helix: https://github.com/Thitic9203/helix (install steps are in its README).
 
 ## Install
 
-Symlink each skill folder:
+Symlink every skill folder (run again after pulling a release that adds skills):
 
 ```bash
-ln -s "$PWD/skills/tc-pyr" ~/.claude/skills/tc-pyr
-ln -s "$PWD/skills/tc-ols" ~/.claude/skills/tc-ols
+for d in "$PWD"/skills/*; do ln -sfn "$d" ~/.claude/skills/$(basename "$d"); done
 ```
 
 Upgrading from the old single `tc-by-project` skill: remove its link first (`rm ~/.claude/skills/tc-by-project`).
@@ -64,6 +67,18 @@ Add to `~/.claude/settings.json` (merge into an existing `hooks` block if you ha
 - Keep your clone on `main` with no local edits. A fast-forward-only pull never overwrites local work; if it cannot pull, it silently skips.
 - Because the skills are symlinks into the clone, the pulled files are used right away.
 - Not on the latest? Run `git -C <your-clone> pull` by hand.
+
+## Team settings in the Tracking sheet
+
+Team-private values stay out of this public repo. Add to the `Config` tab (Key, Value):
+
+| Key | Value |
+|---|---|
+| `VIDEO_FOLDER` | Drive folder for mp4 evidence (`/qase-run`, `/test-task`) |
+| `QA_REVIEWERS` | E-mails to tag for review, comma separated (`/test-task`) |
+| `PROTOTYPE_URL`, `PROTOTYPE_USER` | Pyrite prototype (see below) |
+
+Videos need `ffmpeg` and Playwright installed locally (`brew install ffmpeg`).
 
 ## Pyrite prototype login
 
