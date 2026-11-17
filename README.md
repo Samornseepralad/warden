@@ -9,7 +9,7 @@ Claude skills for QA test-case prep, one skill per project.
 | `/tc-pyr xxx review` | Review TCs against the prototype (layout and flow) and the ticket (all wording), plus the PYR rules then proposes fixes and, on Approve, updates Qase TC, Test plan, Drive sheet and tracking sheet |
 | `/tc-pyr xxx run` | Manual execution from the TC sheet |
 | `/qase-run xxx` | Run the Qase Test plan of PYR-xxx: Test run named like the plan, one mp4 per case (named by Test Title) on Drive, link in each actual result |
-| `/tc-close` | Close the finished review threads in the QA Discord channel: your threads with a whole-word pass / passed / reviewed / approve / approved (any case), ✅ on the first post, then archive. `/tc-close dry` only lists them |
+| `/thread-close` | Close the finished review threads in the QA Discord channel: your threads with a whole-word pass / passed / reviewed / approve / approved (any case), archive, then ✅ on its post in the channel. `/thread-close dry` only lists them |
 | `/test-task xxx` | Test card PYR-xxx by AC/EC: short plan table, **Approve**, mp4 per AC_xx / EC_xx, Jira comment (mp4 links), move card Done / In Progress |
 | `/tc-ols xxxx` | Prepare TCs for **OLS-xxxx** with the OLS rules (Core / Edge, OLS glossary) |
 | `/tc-ols xxxx format` | Move OLS TCs into the release template |
@@ -61,11 +61,11 @@ Use `update` for TC changes that do **not** come from `review`. Most common firs
 - Records one mp4 per AC_xx / EC_xx, posts a Jira comment with bullets and mp4 links only.
 - Passed: `Test on dev: Passed`, tag the reviewers (`QA_REVIEWERS`), move the card to **Done**. Failed: `Test Failed` with mp4, tag the assignee, move the card back to **In Progress**.
 
-### `/tc-close` — close the finished review threads
+### `/thread-close` — close the finished review threads
 - Scans the QA Discord channel (`DISCORD_QA_CHANNEL`) for **active threads you created**.
 - A thread matches when any message has one of `pass`, `passed`, `reviewed`, `approve`, `approved`: any letter case, whole word only (`password` does not match). A match with a negation or failure word (`not`, `fail`, `ไม่` …) is skipped and listed.
-- For each match: adds ✅ to the thread's first post (first, because archived threads accept no new reactions), then archives the thread (not locked, not deleted; anyone can reopen it by posting).
-- `/tc-close dry` lists what it would close and changes nothing.
+- For each match: archives the thread (not locked, not deleted; anyone can reopen it by posting), then puts ✅ on the thread's post **in the channel** (the message the thread hangs from), never inside the thread.
+- `/thread-close dry` lists what it would close and changes nothing.
 - Needs the Discord MCP; without it, it stops and says so.
 
 ### `/tc-ols xxxx` — OLS
@@ -77,7 +77,7 @@ Create TCs with the OLS rules (Core / Edge, OLS glossary), `format` (move into t
 skills/tc-pyr/   SKILL.md + references/{pyr,execute}.md
 skills/tc-ols/   SKILL.md + references/{ols,execute}.md
 skills/qase-run/ SKILL.md + references/video-evidence.md
-skills/tc-close/ SKILL.md
+skills/thread-close/ SKILL.md
 skills/test-task/ SKILL.md + references/video-evidence.md   (video-evidence.md copies must stay identical)
 ```
 
