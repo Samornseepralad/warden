@@ -6,7 +6,7 @@ Claude skills for QA test-case prep, one skill per project.
 |---|---|
 | `/tc-pyr xxx` | Prepare TCs for **PYR-xxx**: write TCs, show an HTML draft and wait for Approve, then create them in Qase (Pyrite), build the Qase Test plan `PYR-xxx <ticket name>`, fill the Drive TC sheet and tracking sheet |
 | `/tc-pyr xxx update` | `updateTCSheet`: sync all, in order: Qase TCs → Test plan → Drive sheet → tracking sheet |
-| `/tc-pyr xxx review` | Review TCs against the prototype first, then the ticket, plus the PYR rules (review only, changes nothing) |
+| `/tc-pyr xxx review` | Review TCs against the prototype first, then the ticket, plus the PYR rules then proposes fixes and, on Approve, updates Qase TC, Test plan, Drive sheet and tracking sheet |
 | `/tc-pyr xxx run` | Manual execution from the TC sheet |
 | `/qase-run xxx` | Run the Qase Test plan of PYR-xxx: Test run named like the plan, one mp4 per case (named by Test Title) on Drive, link in each actual result |
 | `/test-task xxx` | Test card PYR-xxx by AC/EC: short plan table, **Approve**, mp4 per AC_xx / EC_xx, Jira comment (mp4 links), move card Done / In Progress |

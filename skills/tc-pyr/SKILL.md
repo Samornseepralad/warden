@@ -53,11 +53,15 @@ Read [references/pyr.md](references/pyr.md). Its rules override the generic Heli
 2. Load the ticket's TCs (Qase suite / Drive sheet) and the ticket (AC/EC, business rules, "ไม่อยู่ใน ticket นี้:").
 3. Open the prototype headless (profile "Targets") and walk every TC's steps in it.
 4. Run Helix `tc-review-workflow` with the profile's "Review-TC overlay": **prototype is the primary source, then the ticket**; classify findings as the overlay says.
-5. Report Good vs Need Improve in chat, short, findings quoted. Review only: change nothing, post nothing. Offer the fix path in one line: `/tc-pyr 783 update`.
+5. Report Good vs Need Improve in chat, short, findings quoted. Nothing is written yet.
+6. **Fix proposal (only if some finding is fixable by changing TCs).** Draft the improved TCs per the findings (TC vs prototype, coverage gap, format / plan; also "Not in prototype" only when the user decided). Findings that need the PO (prototype vs ticket, open "not in prototype") are listed, not changed. Show the changes in the HTML review gate (changed / added / removed rows marked, each with its finding) and ask once: `Update ทุกที่ (Qase TC → Test plan → Drive sheet → tracking sheet)? Approve / แก้ไข`
+   - **Approve** → run Step 3 for all four places, without asking again.
+   - **แก้ไข** → change the draft, regenerate the HTML, ask again.
+   - No approval = no write. No fixable findings → say so and stop.
 
 ## Step 3 — Update (full sync, always all four)
 
-`/tc-pyr 783 update` updates **everything**. First show the changed TCs in the same HTML review gate (changed / added / removed rows marked) and wait for **Approve**. Then, in this order, no skipping:
+`/tc-pyr 783 update` updates **everything**. First show the changed TCs in the same HTML review gate (changed / added / removed rows marked) and wait for **Approve** (when coming from `review`, that Approve already given in step 6 counts; do not ask twice). Then, in this order, no skipping:
 
 1. **Qase TCs** — change / add / remove cases in place (same ids; reorder by overwriting slots, never delete + recreate).
 2. **Qase Test plan** `PYR-783 <ticket name>` — re-sync cases and title; verify count.
@@ -69,13 +73,13 @@ Finish with one report line per step. If one step fails, say which, and do not r
 ## Rules
 
 - MUST take the ticket key from the command. Never guess it.
-- MUST show the HTML review gate and get explicit Approve before the first write to Qase, Drive or the tracking sheet (create and update).
+- MUST show the HTML review gate and get explicit Approve before the first write to Qase, Drive or the tracking sheet (create, update and review fixes).
 - MUST create or update the Test plan after every create / update, titled `PYR-xxx <ticket name>`.
 - MUST keep Qase cases, Test plan, Drive sheet and any other artifact of one ticket identical.
 - MUST NOT write secrets (Qase token, prototype password, other passwords) into sheet, Qase, Jira, repo or chat. Token comes from `QASE_API_TOKEN`.
 - MUST NOT invent a rule that is not in the profile. If the profile is silent on something that changes the output, ask once and propose the answer for the team to add to the profile.
 - Automation (Playwright) is not part of this flow: do not offer to write or run it unless asked.
-- Plain `/tc-review` (Helix) knows neither the PYR rules nor the prototype. To review against them, use `/tc-pyr 783 review`. Review never changes TCs.
+- Plain `/tc-review` (Helix) knows neither the PYR rules nor the prototype. To review against them, use `/tc-pyr 783 review`. Review itself writes nothing; changes happen only after the Approve in review step 6.
 
 ## Communication (shortest possible)
 

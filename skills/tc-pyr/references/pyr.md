@@ -76,7 +76,7 @@ Always. As soon as the ticket's TCs exist in Qase, put them in a Test plan. One 
 - **No Figma / PRD link in the ticket = absent.** Do not ask for them. Record "no Figma / no PRD" in the pre-draft review and Remark. The prototype (see "Ticket review") is still compared with the ticket.
 
 ## Review-TC overlay
-Used by `/tc-pyr xxx review` (Helix `tc-review-workflow` with this overlay). Review the TCs of one ticket against **the prototype first, then the ticket**, plus the PYR format rules. Review only: never edit TCs, Qase, the plan or the sheet here (fixes go through `/tc-pyr xxx update`); no Jira comment.
+Used by `/tc-pyr xxx review` (Helix `tc-review-workflow` with this overlay). Review the TCs of one ticket against **the prototype first, then the ticket**, plus the PYR format rules. The review itself writes nothing and posts no Jira comment. Fixable findings become a fix proposal; after the user's explicit Approve the fixes are applied to **all four places** (Qase TC → Test plan → Drive sheet → tracking sheet, the `update` flow). Findings that need the PO are never applied.
 
 ### Sources and precedence
 1. **Prototype (primary).** Open it headless and log in as in "Ticket review". For what a user sees and does (screens, labels, fields, buttons, states, validation messages, flow order) the prototype wins over the ticket.
@@ -105,4 +105,4 @@ Classify each finding, one line each, with sources quoted:
 | Cannot verify | The prototype cannot reach that state (e.g. server error) | Not a defect; say it was not checked against the prototype |
 | Format / plan | Breaks a rule in "TC format rules" or the plan rules | Fix as the rule says |
 
-Each finding: TC ID, the quoted TC text, `prototype shows` (screen and element), and the ticket quote when relevant. Report **Good** vs **Need Improve** as the Helix workflow does, with counts per class; keep it short. Never rewrite a TC silently to make it pass.
+Each finding: TC ID, the quoted TC text, `prototype shows` (screen and element), and the ticket quote when relevant. Report **Good** vs **Need Improve** as the Helix workflow does, with counts per class; keep it short. Never rewrite a TC silently to make it pass; every change goes through the Approve gate.
