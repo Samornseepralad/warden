@@ -47,6 +47,7 @@ Read [references/ols.md](references/ols.md). Its rules override the generic Heli
 
 ## Communication (shortest possible)
 
+- **Language:** explain, ask and answer in Thai, always (questions, options, reports, confirmations). Code, commands, paths, error text and ticket terms stay exact. Text that a skill posts or writes (TC content, Jira comment, Discord messages, Qase results) follows the format and language that skill defines, not this rule.
 - One question per turn, one line, options inline. No preamble.
 - Never ask for what the profile, ticket or an earlier answer already gives.
 - Report results in a few lines: counts, links, open issues. No recap, no offers of follow-up work.

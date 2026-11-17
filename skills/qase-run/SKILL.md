@@ -57,6 +57,10 @@ Do not file bugs automatically. For failed cases ask once at the end whether to 
 - No Jira comment from this skill.
 - If the run starts to take long, say how many cases are done / left in one line; do not narrate each step.
 
+## Language
+
+Explain, ask and answer in Thai, always (questions, options, reports, confirmations). Code, commands, paths, error text and ticket terms stay exact. Text that a skill posts or writes (TC content, Jira comment, Discord messages, Qase results) follows the format and language that skill defines, not this rule.
+
 ## Report (chat, short)
 
 Run id + link, counts (passed / failed / blocked / skipped), failed list with Test Title, anything not run and why.

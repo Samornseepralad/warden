@@ -86,6 +86,10 @@ Post the comment first, then transition. If either call fails, say which and sto
 - MUST NOT file bugs automatically; for Failed, ask once whether to hand it to `create-bug-workflow`.
 - The PYR rule "no Jira comment" belongs to `tc-pyr` (TC prep). Here the Jira comment is the deliverable.
 
+## Language
+
+Explain, ask and answer in Thai, always (questions, options, reports, confirmations). Code, commands, paths, error text and ticket terms stay exact. Text that a skill posts or writes (TC content, Jira comment, Discord messages, Qase results) follows the format and language that skill defines, not this rule.
+
 ## QA closing
 
 Follow Helix `references/qa-closing-shared.md`, plus:
