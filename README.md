@@ -21,11 +21,12 @@ TC review for OLS, or without PYR rules: Helix `/tc-review`.
 
 ### `/tc-pyr xxx` — create TCs for PYR-xxx
 1. Read the ticket from Jira (AC/EC, business rules, details).
-2. **Ticket review**: compare the ticket with the prototype for layout and flow (Figma / PRD only if linked; absent means absent). **All button names and UI text come from the ticket only**; the prototype is a rough picture for developers, not a wording source. **Scope check**: list AC/EC that belong to another card (ticket section "ไม่อยู่ใน ticket นี้:") or go beyond the ticket, as short bullets for the PO.
+2. **Ticket review**: compare the ticket with the prototype for layout and flow (Figma / PRD only if linked; absent means absent). **All button names and UI text come from the ticket only**; the prototype is a rough picture for developers, not a wording source. **Scope check**: AC/EC listed in the ticket section "ไม่อยู่ใน ticket นี้:" are cut (no TC, no question); AC/EC beyond the ticket become questions for the PO, each starting with its AC/EC.
 3. Write the TCs (Helix `tc-fe-prep-workflow` / `tc-api-prep-workflow`) with the PYR rules. Button names and UI text come from the ticket only; the prototype only guides layout and flow. A button the ticket does not name becomes a question for the PO, not a name borrowed from the prototype.
 4. **HTML draft** opens for review: TCs, mismatches, a "ต้องถาม PO" section. Reply **Approve** or **แก้ไข**. Nothing is written before Approve.
 5. On Approve: Qase TCs → Qase Test plan `PYR-xxx <ticket name>` → Drive TC sheet → tracking sheet.
 6. **Sign-off:** Jira field **TC Status** = `DONE`, then a **Discord thread** `PYR-xxx <Jira name>` in the QA channel. First message: one reviewer picked at random from Samorn, Nipit and Sujaree (never the person who created the TCs), `need review tc`, and `TC: Link` to the Drive TC sheet. The thread name and message are shown in the HTML gate before posting.
+7. **Question comment:** if PO questions are still open, it asks `comment ใน Jira ไหม?`. ใช่ → a Jira comment that tags the PO and lists the questions as short bullets (each starting with its AC/EC) and a Discord post in the question channel: `<PO> มี comment <Jira comment link>`. ไม่ → nothing is posted.
 
 ### `/tc-pyr xxx review` — review the TCs
 - Checks the TCs against the **prototype for layout and flow** and against the **ticket for all wording** (button names, UI text) and rules, plus PYR format rules and the Test plan.
@@ -39,7 +40,7 @@ Updates, in order: Qase TCs → Test plan → Drive sheet → tracking sheet, af
 **After `review` + Approve, do not run `update` again.** `review` already updated all four places; a second run adds nothing.
 
 Use `update` for TC changes that do **not** come from `review`. Most common first:
-1. The PO answered about an AC/EC flagged as out of scope, and TCs must be added or removed (the most frequent case, because the scope check usually leaves questions for the PO).
+1. The PO answered a question about an AC/EC that looked beyond scope, and TCs must be added or removed (the most frequent case).
 2. The ticket was changed later (AC/EC changed after the TCs were created or reviewed).
 3. You edited some TCs by hand (file or Qase) and want everything synced.
 
@@ -56,7 +57,7 @@ Use `update` for TC changes that do **not** come from `review`. Most common firs
 - Does not complete the run and does not file bugs on its own.
 
 ### `/test-task xxx` — test one card by AC/EC
-- Plans tests from AC/EC (business rules and details become extra rows; out-of-scope items are listed for the PO).
+- Plans tests from AC/EC (business rules and details become extra rows; items listed in "ไม่อยู่ใน ticket นี้:" are cut, other out-of-scope items are listed for the PO).
 - Shows a **short plan table in chat** and waits for **Approve** before any test.
 - Records one mp4 per AC_xx / EC_xx, posts a Jira comment with bullets and mp4 links only.
 - Passed: `Test on dev: Passed`, tag the reviewers (`QA_REVIEWERS`), move the card to **Done**. Failed: `Test Failed` with mp4, tag the assignee, move the card back to **In Progress**.
@@ -154,6 +155,8 @@ Team-private values stay out of this public repo. Add to the `Config` tab (Key, 
 | `VIDEO_FOLDER` | Drive folder for mp4 evidence (`/qase-run`, `/test-task`) |
 | `DISCORD_QA_CHANNEL`, `DISCORD_PO_CHANNEL` | Discord channels for the QA thread reply and the PO review request (`/tc-pyr xxx review`) |
 | `MENTION_SAMORN`, `MENTION_NIPIT`, `MENTION_SUJAREE` | Discord username (or `<@id>` mention) of each QA member (`/tc-pyr xxx`); a username is resolved to a real mention at post time |
+| `PO_JIRA_ACCOUNT` | Jira accountId or e-mail of the PO, tagged in the question comment (`/tc-pyr xxx`) |
+| `DISCORD_QUESTION_CHANNEL` | Discord channel for the "มี comment <link>" post (`/tc-pyr xxx`) |
 | `PO_MENTIONS` | PO to mention in the review request: Discord usernames, `<@id>` or role mentions, space separated (`/tc-pyr xxx review`) |
 | `QA_REVIEWERS` | E-mails to tag for review, comma separated (`/test-task`) |
 | `PROTOTYPE_URL`, `PROTOTYPE_USER` | Pyrite prototype (see below) |
