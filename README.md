@@ -14,6 +14,7 @@ Claude skills for QA test-case prep, one skill per project.
 | `/tc-ols xxxx` | Prepare TCs for **OLS-xxxx** with the OLS rules (Core / Edge, OLS glossary) |
 | `/tc-ols xxxx format` | Move OLS TCs into the release template |
 | `/tc-ols xxxx run` | Manual execution from the TC sheet |
+| `/focus-target-update [date]` | Daily target result: read the day's Target rows (read-only), collect my Jira and Discord review evidence, judge each target (✅ / ⚠️ / ❌), then after **Approve** post one bullet message in the Discord Target channel |
 
 TC review for OLS, or without PYR rules: Helix `/tc-review`.
 
@@ -72,6 +73,15 @@ Use `update` for TC changes that do **not** come from `review`. Most common firs
 ### `/tc-ols xxxx` — OLS
 Create TCs with the OLS rules (Core / Edge, OLS glossary), `format` (move into the release template) and `run`. No Qase Test plan for OLS yet.
 
+### `/focus-target-update [date]` — report the daily target
+- Reads the day's rows from the Focus work sheet (**read-only**; the skill never writes the sheet or Jira) and finds the Target column of the person running it.
+- Collects evidence from Jira (TC done, TC reviewed = QA-REVIEWED, RTT retest, test story Done) and from the Discord review channel (review requests sent, Reviewed). A source that cannot be read is shown as "ดึงไม่ได้", never as 0.
+- Shows a judgement table in chat (target, count, evidence, ✅ ได้ตามเป้า / ⚠️ บางส่วน / ❌ ไม่ได้ตามเป้า), then a draft: one bullet per target, one bullet per card as a masked link `[ABC-123](…)`. **Approve** before anything is posted; after posting it checks that the message is really visible.
+- Team rule: results are due before 18:00 of that day; after that the skill warns and posts only if you confirm.
+- Discord is reached through your logged-in Chrome tab (no plugin); the SKILL.md records the posting recipe that works and the ones that do not.
+- Once per machine: Chrome *View → Developer → Allow JavaScript from Apple Events* must be on (osascript reads Discord through it). The skill temporarily replaces your clipboard and restores it afterwards.
+- Untested by a second person yet: the first teammate to run it should check the posting step on their machine.
+
 ## Layout
 
 ```
@@ -80,6 +90,7 @@ skills/tc-ols/   SKILL.md + references/{ols,execute}.md
 skills/qase-run/ SKILL.md + references/video-evidence.md
 skills/thread-close/ SKILL.md
 skills/test-task/ SKILL.md + references/video-evidence.md   (video-evidence.md copies must stay identical)
+skills/focus-target-update/ SKILL.md + references/discord-posting.md
 ```
 
 ## Prerequisite: Helix
@@ -160,6 +171,9 @@ Team-private values stay out of this public repo. Add to the `Config` tab (Key, 
 | `PO_MENTIONS` | PO to mention in the review request: Discord usernames, `<@id>` or role mentions, space separated (`/tc-pyr xxx review`) |
 | `QA_REVIEWERS` | E-mails to tag for review, comma separated (`/test-task`) |
 | `PROTOTYPE_URL`, `PROTOTYPE_USER` | Pyrite prototype (see below) |
+| `TARGET_SHEET`, `TARGET_TAB` | Focus work sheet URL and its daily Target tab (`/focus-target-update`) |
+| `TARGET_DISCORD_CHANNEL`, `REVIEW_DISCORD_CHANNEL` | Discord channel URLs: where results are posted, and where TC review threads live (`/focus-target-update`) |
+| `JIRA_PROJECTS` | Project keys the team tests, comma separated, e.g. `PYR, OLS` (`/focus-target-update` limits its TC Status search to them) |
 
 Videos need `ffmpeg` and Playwright installed locally (`brew install ffmpeg`).
 
