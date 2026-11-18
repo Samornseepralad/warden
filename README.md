@@ -64,10 +64,12 @@ Create TCs with the OLS rules (Core / Edge, OLS glossary), `format` (move into t
 
 ### `/focus-target-update [date]` — report the daily target
 - Reads the day's rows from the Focus work sheet (**read-only**; the skill never writes the sheet or Jira) and finds the Target column of the person running it.
-- Collects evidence from Jira (TC done, QA REVIEWED, RTT retest, test story Done) and from the Discord review channel (review requests sent, Reviewed). A source that cannot be read is shown as "ดึงไม่ได้", never as 0.
+- Collects evidence from Jira (TC done, TC reviewed = QA REVIEWED, RTT retest, test story Done) and from the Discord review channel (review requests sent, Reviewed). A source that cannot be read is shown as "ดึงไม่ได้", never as 0.
 - Shows a judgement table in chat (target, count, evidence, ✅ ได้ตามเป้า / ⚠️ บางส่วน / ❌ ไม่ได้ตามเป้า), then a draft: one bullet per target, one bullet per card as a masked link `[ABC-123](…)`. **Approve** before anything is posted; after posting it checks that the message is really visible.
 - Team rule: results are due before 18:00 of that day; after that the skill warns and posts only if you confirm.
 - Discord is reached through your logged-in Chrome tab (no plugin); the SKILL.md records the posting recipe that works and the ones that do not.
+- Once per machine: Chrome *View → Developer → Allow JavaScript from Apple Events* must be on (osascript reads Discord through it). The skill temporarily replaces your clipboard and restores it afterwards.
+- Untested by a second person yet: the first teammate to run it should check the posting step on their machine.
 
 ## Layout
 
