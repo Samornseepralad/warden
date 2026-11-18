@@ -37,12 +37,13 @@ Target kinds: **Clear RTT**, **TC Prep** (TC ready / sent to review), **Review T
 
 ## 3. Evidence (mine only, inside the window)
 
-**Jira** (Atlassian connector; `atlassianUserInfo` for me). JQL dates follow the Jira profile time zone, not Asia/Bangkok, so use a wide net — `<start>` = day − 1, `<end>` = day + 2 — and keep only changelog entries whose `created` (converted to Asia/Bangkok) is inside the window. Two queries, merged:
+**Jira** (Atlassian connector; `atlassianUserInfo` for me). JQL dates follow the Jira profile time zone, not Asia/Bangkok, so use a wide net — `<start>` = day − 1, `<end>` = day + 2 — and keep only changelog entries whose `created` (converted to Asia/Bangkok) is inside the window. Three queries, merged (verified on this Jira: `CHANGED BY` works on `status` but **not** on the custom field `TC Status` — it returns Bad Request — and the JQL name of that field needs the type suffix, `"TC Status[Dropdown]"`):
 ```
 "QA Owner[People]" = currentUser() AND updated >= "<start>" AND updated < "<end>" ORDER BY updated DESC
-"TC Status" CHANGED BY currentUser() DURING ("<start>", "<end>")
+status CHANGED BY currentUser() DURING ("<start>", "<end>")
+"TC Status[Dropdown]" IN ("DONE", "QA REVIEWED") AND updated >= "<start>" AND updated < "<end>"
 ```
-The second one finds cards I reviewed but do not own (I am not their QA Owner, so the first query misses them). For each candidate `getJiraIssue` with `expand=changelog,names` (large results are saved to a file; filter with `jq` on `author.accountId` = me and `created` inside the window). Field names to look for (ids come from `names`): `TC Status`, `Test Result Approval by QA`.
+The second finds cards whose status I moved but do not own; the third finds TC Status moves on cards I do not own (e.g. TCs I reviewed). The queries cannot filter by author for `TC Status`, so they are only candidate nets: the author filter is always the changelog check below. For each candidate `getJiraIssue` with `expand=changelog,names` (large results are saved to a file; filter with `jq` on `author.accountId` = me and `created` inside the window). Field names to look for (ids come from `names`): `TC Status`, `Test Result Approval by QA`.
 - **TC Prep** — `TC Status` → `DONE`, or my comment with a TC table
 - **TC reviewed** — `TC Status` → `QA REVIEWED`
 - **RTT cleared** — `Test Result Approval by QA` → `PASSED`/`FAILED`/`SKIPPED`, or status → Done after retest
