@@ -64,7 +64,7 @@ Create TCs with the OLS rules (Core / Edge, OLS glossary), `format` (move into t
 
 ### `/focus-target-update [date]` — report the daily target
 - Reads the day's rows from the Focus work sheet (**read-only**; the skill never writes the sheet or Jira) and finds the Target column of the person running it.
-- Collects evidence from Jira (TC done, TC reviewed = QA REVIEWED, RTT retest, test story Done) and from the Discord review channel (review requests sent, Reviewed). A source that cannot be read is shown as "ดึงไม่ได้", never as 0.
+- Collects evidence from Jira (TC done, TC reviewed = QA-REVIEWED, RTT retest, test story Done) and from the Discord review channel (review requests sent, Reviewed). A source that cannot be read is shown as "ดึงไม่ได้", never as 0.
 - Shows a judgement table in chat (target, count, evidence, ✅ ได้ตามเป้า / ⚠️ บางส่วน / ❌ ไม่ได้ตามเป้า), then a draft: one bullet per target, one bullet per card as a masked link `[ABC-123](…)`. **Approve** before anything is posted; after posting it checks that the message is really visible.
 - Team rule: results are due before 18:00 of that day; after that the skill warns and posts only if you confirm.
 - Discord is reached through your logged-in Chrome tab (no plugin); the SKILL.md records the posting recipe that works and the ones that do not.
@@ -156,6 +156,7 @@ Team-private values stay out of this public repo. Add to the `Config` tab (Key, 
 | `PROTOTYPE_URL`, `PROTOTYPE_USER` | Pyrite prototype (see below) |
 | `TARGET_SHEET`, `TARGET_TAB` | Focus work sheet URL and its daily Target tab (`/focus-target-update`) |
 | `TARGET_DISCORD_CHANNEL`, `REVIEW_DISCORD_CHANNEL` | Discord channel URLs: where results are posted, and where TC review threads live (`/focus-target-update`) |
+| `JIRA_PROJECTS` | Project keys the team tests, comma separated, e.g. `PYR, OLS` (`/focus-target-update` limits its TC Status search to them) |
 
 Videos need `ffmpeg` and Playwright installed locally (`brew install ffmpeg`).
 

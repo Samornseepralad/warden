@@ -1,6 +1,6 @@
 ---
 name: focus-target-update
-description: Report the daily target result of the QA running it — `/focus-target-update` (today) or `/focus-target-update 17-Nov`. Reads that day's Target rows from the Focus work sheet (read-only), collects the QA's evidence from Jira (TC done, TC reviewed = QA REVIEWED, RTT retest, test story Done) and from the Discord review channel (review requests sent, Reviewed), judges each target row (ได้ตามเป้า / บางส่วน / ไม่ได้ตามเป้า), shows the table, waits for Approve, then posts one bullet message in the Discord Target channel and checks it is visible. Use when the user types /focus-target-update or asks to report or update the daily target (อัปเดตเป้า, แจ้งเป้าวันนี้). Do NOT use for other people's results, for writing any Google Sheet or Jira, or for creating Target rows.
+description: Report the daily target result of the QA running it — `/focus-target-update` (today) or `/focus-target-update 17-Nov`. Reads that day's Target rows from the Focus work sheet (read-only), collects the QA's evidence from Jira (TC done, TC reviewed = QA-REVIEWED, RTT retest, test story Done) and from the Discord review channel (review requests sent, Reviewed), judges each target row (ได้ตามเป้า / บางส่วน / ไม่ได้ตามเป้า), shows the table, waits for Approve, then posts one bullet message in the Discord Target channel and checks it is visible. Use when the user types /focus-target-update or asks to report or update the daily target (อัปเดตเป้า, แจ้งเป้าวันนี้). Do NOT use for other people's results, for writing any Google Sheet or Jira, or for creating Target rows.
 argument-hint: "[date]   e.g. 17-Nov (default today)"
 metadata:
   proactive_triggers:
@@ -17,7 +17,7 @@ The only write is the Discord post, and it needs the user's explicit approval of
 
 ## Settings (Tracking sheet `Config` tab, same place as the other warden skills)
 
-Team-private values stay out of this public repo. Keys: `TARGET_SHEET` (URL of the Focus work sheet), `TARGET_TAB` (tab with the daily targets), `TARGET_DISCORD_CHANNEL` (channel URL where results are posted), `REVIEW_DISCORD_CHANNEL` (channel URL where TC review requests are posted as threads). Missing key → ask once.
+Team-private values stay out of this public repo. Keys: `TARGET_SHEET` (URL of the Focus work sheet), `TARGET_TAB` (tab with the daily targets), `TARGET_DISCORD_CHANNEL` (channel URL where results are posted), `REVIEW_DISCORD_CHANNEL` (channel URL where TC review requests are posted as threads), `JIRA_PROJECTS` (project keys the team tests, e.g. `PYR, OLS`; used to limit the TC Status net). Missing key → ask once.
 
 Target tab layout: column A date, column B target text, then one column per QA headed `QA - <full name>` (use the column of the person running the skill, matched against their Jira display name; read it for reference only), and a Note column.
 
@@ -35,28 +35,28 @@ Discord has no plugin here, so read and post through the logged-in Chrome tab (o
 
 ## 2. Read the Target rows
 
-`get_values` on the target tab; keep rows where the date equals the day. No rows → report and stop (never create rows). Parse the number from the target text ("อย่างน้อยคนละ 3 ใบ" → 3; a range "1-2 ใบ" → lower bound, say so in the table). Rows ending "ถ้ามี" are optional.
+`get_values` on the target tab; keep rows where the date equals the day. No rows → report and stop (never create rows), and say which date is the latest row in the sheet so the user can rerun for that day. Parse the number from the target text ("อย่างน้อยคนละ 3 ใบ" → 3; a range "1-2 ใบ" → lower bound, say so in the table). Rows ending "ถ้ามี" are optional.
 
 Target kinds: **Clear RTT**, **TC Prep** (TC ready / sent to review), **Review TC** (the user reviewed someone's TC), **TC Prep และส่งรีวิวให้ผ่าน** (prepared and review passed).
 
 ## 3. Evidence (the user's own, inside the window)
 
-**Jira** (Atlassian connector; `atlassianUserInfo` for the user). JQL dates follow the Jira profile time zone, not Asia/Bangkok, so use a wide net — `<start>` = day − 1, `<end>` = day + 2 — and keep only changelog entries whose `created` (converted to Asia/Bangkok) is inside the window. **Author rule:** what the user *did* (TC Prep, Review TC, RTT, story Done) counts only when the changelog author is the user. The one exception is `QA REVIEWED` on the user's own TC: the reviewer sets it, so for the passed-review part it is accepted from any author (below). Three queries, merged (verified on this Jira: `CHANGED BY` works on `status` but **not** on the custom field `TC Status` — it returns Bad Request — and the JQL name of that field needs the type suffix, `"TC Status[Dropdown]"`):
+**Jira** (Atlassian connector; `atlassianUserInfo` for the user). JQL dates follow the Jira profile time zone, not Asia/Bangkok, so use a wide net — `<start>` = day − 1, `<end>` = day + 2 — and keep only changelog entries whose `created` (converted to Asia/Bangkok) is inside the window. **Author rule:** what the user *did* (TC Prep, Review TC, RTT, story Done) counts only when the changelog author is the user. The one exception is `QA-REVIEWED` on the user's own TC: the reviewer sets it, so for the passed-review part it is accepted from any author (below). Three queries, merged (verified on this Jira: `CHANGED BY` works on `status` but **not** on the custom field `TC Status` — it returns Bad Request — and the JQL name of that field needs the type suffix, `"TC Status[Dropdown]"`):
 ```
 "QA Owner[People]" = currentUser() AND updated >= "<start>" AND updated < "<end>" ORDER BY updated DESC
 status CHANGED BY currentUser() DURING ("<start>", "<end>")
-project IN (<projects of the cards found by queries 1 and 2>) AND "TC Status[Dropdown]" IN ("DONE", "QA REVIEWED") AND updated >= "<start>" AND updated < "<end>" ORDER BY updated DESC
+project IN (<JIRA_PROJECTS>) AND "TC Status[Dropdown]" = "QA-REVIEWED" AND updated >= "<start>" AND updated < "<end>" ORDER BY updated DESC
 ```
-The second finds cards whose status the user moved but does not own; the third finds TC Status moves on cards the user does not own (e.g. TCs the user reviewed). Query 3 would return the whole team's cards, so it is limited to the projects of the cards queries 1 and 2 returned (if both are empty, skip it and say Review TC rests on Discord evidence only), uses `maxResults` 50, and when `hasNextPage` is true do not page on: tell the user the net was truncated and narrow it (one `TC Status` value per query, or a one-day window). The queries cannot filter by author for `TC Status`, so they are only candidate nets; the changelog check below decides what counts. For each candidate `getJiraIssue` with `expand=changelog,names` (large results are saved to a file; filter with `jq` on `author.accountId` = the user and `created` inside the window). Field names to look for (ids come from `names`): `TC Status`, `Test Result Approval by QA`.
+The second finds cards whose status the user moved but does not own. Query 3 is the **main net for Review TC** and for "TC passed review": a TC Status move does not change `status` and the user does not own the card, so queries 1 and 2 miss it (a real dry-run lost all of a day's reviews this way). The exact value is `QA-REVIEWED` **with a hyphen**; `"QA REVIEWED"` (space) is accepted by JQL but returns nothing, silently. It would return the whole team's cards, so it is limited to the projects in the Config key `JIRA_PROJECTS`; if the key is missing, use the projects of the cards queries 1 and 2 returned and tell the user "Review TC อาจไม่ครบถ้าวันนั้นรีวิวโปรเจกต์อื่น — เพิ่ม `JIRA_PROJECTS` ใน Config" (if both are empty, skip query 3 and say Review TC rests on Discord evidence only). Use `maxResults` 50; when `hasNextPage` is true do not page on: tell the user the net was truncated and narrow it (a one-day window). The queries cannot filter by author for `TC Status`, so they are only candidate nets; the changelog check below decides what counts. For each candidate `getJiraIssue` with `expand=changelog,names` (large results are saved to a file; filter with `jq` on `author.accountId` = the user and `created` inside the window). Field names to look for (ids come from `names`): `TC Status`, `Test Result Approval by QA`.
 - **TC Prep** — `TC Status` → `DONE`, or the user's comment with a TC table
-- **Review TC (the user reviewed someone else's TC)** — `TC Status` → `QA REVIEWED` with the user as changelog author, on a card whose TC the user did not prepare
-- **TC passed review (the user's own TC)** — `TC Status` → `QA REVIEWED` by **any** author (normally the reviewer), inside the window, on a card whose TC the user prepared (TC Prep by the user above, or the user's own review-request thread). Used only by the "TC Prep และส่งรีวิวให้ผ่าน" rows. A pass that happens after the window is not counted; mention it as "ผ่านรีวิวหลังวันนั้น"
+- **Review TC (the user reviewed someone else's TC)** — `TC Status` → `QA-REVIEWED` with the user as changelog author, on a card whose TC the user did not prepare
+- **TC passed review (the user's own TC)** — `TC Status` → `QA-REVIEWED` by **any** author (normally the reviewer), inside the window, on a card whose TC the user prepared (TC Prep by the user above, or the user's own review-request thread). Used only by the "TC Prep และส่งรีวิวให้ผ่าน" rows. A pass that happens after the window is not counted; mention it as "ผ่านรีวิวหลังวันนั้น"
 - **RTT cleared** — `Test Result Approval by QA` → `PASSED`/`FAILED`/`SKIPPED`, or status → Done after retest
 - **Test story Done** — status → Done by the user
 - Bugs the user opened: `reporter = currentUser() AND issuetype = Bug AND created …`
 
 **Discord review channel** (read-only): each review request is a "started a thread: <CARD> …" message. Count (a) threads the user started to send a TC for review → TC Prep "ส่งรีวิว"; (b) review requests addressed to the user that the user answered with Reviewed → Review TC; (c) reviewer replies Reviewed / ผ่าน / approved on the user's threads.
-Recipe: JS-click the thread link (`a[role=link]` whose text starts with the card id) → the URL becomes `…/threads/<id>` and the page lists that thread's messages (skip the "started a thread" rows). In AppleScript JS strings never write `\n` (it becomes a real newline) — use `String.fromCharCode(10)`, and do not name a variable `key`. `time[datetime]` is **UTC → add 7 h for Asia/Bangkok**; a grouped follow-up message has no username and belongs to the previous author (mark it unconfirmed). `Reviewing` = started only; `Reviewed` = done. Report the Thai time of the user's replies. Replies after 18:00 are still counted but flagged `late` in the step 5 table; the user decides there whether to keep or drop them. Afterwards put the tab back on the target channel URL.
+Recipe: JS-click the thread link (`a[role=link]` whose text starts with the card id) → the URL becomes `…/threads/<id>` and the page lists that thread's messages (skip the "started a thread" rows). In AppleScript JS strings never write `\n` (it becomes a real newline) — use `String.fromCharCode(10)`, and do not name a variable `key`. `time[datetime]` is **UTC → add 7 h for Asia/Bangkok**; a grouped follow-up message has no username and belongs to the previous author (mark it unconfirmed). `Reviewing` = started only; `Reviewed` = done. Report the Thai time of the user's replies. Replies after 18:00 are still counted but flagged `late` in the step 5 table; the user decides there whether to keep or drop them. **The same `late` flag applies to Jira events after 18:00** (e.g. TC → DONE at 18:15). Afterwards put the tab back on the target channel URL.
 
 ## 4. Decide per row
 
@@ -65,8 +65,9 @@ Count = evidence items of that row's kind vs the parsed target N:
 - 1 ≤ count < N → ⚠️ ได้ตามเป้าบางส่วน
 - count = 0 → ❌ ไม่ได้ตามเป้า
 - optional ("ถ้ามี") row with no eligible work → omit
-- "ส่งรีวิวให้ผ่าน" rows: count only TCs the user prepared (author = the user) **and** that passed review (`QA REVIEWED` by any author, or the reviewer's Reviewed in the user's own Discord thread) inside the window. The author filter applies to the preparing, never to the reviewer's pass.
+- "ส่งรีวิวให้ผ่าน" rows: count only TCs the user prepared (author = the user) **and** that passed review (`QA-REVIEWED` by any author, or the reviewer's Reviewed in the user's own Discord thread) inside the window. The author filter applies to the preparing, never to the reviewer's pass.
 - A card counts **once per target kind**: a TC that is Done and also sent to review is one TC Prep, not two.
+- Several rows of the same kind on one day (e.g. "Review TC อย่างน้อย 3 ใบ" and "Review TC อย่างน้อย 2 ใบ ถ้ามี") are **separate quotas filled in sheet order**: the cards fill the first row up to its target, the rest go to the next row; the same card never counts in two rows. Say this in the table so the user can correct it if the team meant otherwise.
 - A row whose source could not be read ("ดึงไม่ได้") is **not judged** (not 0, not ❌): show it as "ดึงไม่ได้" and wait for the user to decide before the overall result and the draft.
 - If no row is left after omitting optional ones, report that and stop.
 
@@ -115,8 +116,10 @@ Show the draft, wait for Approve, then post it and verify it is visible in the c
 - Resending when the box is empty but the message is not visible → duplicate. Reload and look first.
 - Pressing Return on an empty edit box → Discord offers to delete the message.
 - Adding a reason line, or several card ids on one line.
-- Filtering `QA REVIEWED` by the user as author on the user's own TCs: the reviewer sets it, so the pass is accepted from any author (only the preparing is author-filtered).
+- Writing the value as `QA REVIEWED` (space): the JQL runs and returns nothing, so Review TC silently becomes 0 → ❌. The Jira value is `QA-REVIEWED`.
+- Filtering `QA-REVIEWED` by the user as author on the user's own TCs: the reviewer sets it, so the pass is accepted from any author (only the preparing is author-filtered).
 - Running the `TC Status` net without a project limit → the whole team's cards (the same query without `project IN (…)` also returned MICA2 cards).
+- Deriving the project list only from the user's own cards → a day spent reviewing another project is missed; set `JIRA_PROJECTS` in Config.
 
 ## Output
 
