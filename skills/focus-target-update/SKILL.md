@@ -41,15 +41,16 @@ Target kinds: **Clear RTT**, **TC Prep** (TC ready / sent to review), **Review T
 
 ## 3. Evidence (the user's own, inside the window)
 
-**Jira** (Atlassian connector; `atlassianUserInfo` for the user). JQL dates follow the Jira profile time zone, not Asia/Bangkok, so use a wide net — `<start>` = day − 1, `<end>` = day + 2 — and keep only changelog entries whose `created` (converted to Asia/Bangkok) is inside the window. Three queries, merged (verified on this Jira: `CHANGED BY` works on `status` but **not** on the custom field `TC Status` — it returns Bad Request — and the JQL name of that field needs the type suffix, `"TC Status[Dropdown]"`):
+**Jira** (Atlassian connector; `atlassianUserInfo` for the user). JQL dates follow the Jira profile time zone, not Asia/Bangkok, so use a wide net — `<start>` = day − 1, `<end>` = day + 2 — and keep only changelog entries whose `created` (converted to Asia/Bangkok) is inside the window. **Author rule:** what the user *did* (TC Prep, Review TC, RTT, story Done) counts only when the changelog author is the user. The one exception is `QA REVIEWED` on the user's own TC: the reviewer sets it, so for the passed-review part it is accepted from any author (below). Three queries, merged (verified on this Jira: `CHANGED BY` works on `status` but **not** on the custom field `TC Status` — it returns Bad Request — and the JQL name of that field needs the type suffix, `"TC Status[Dropdown]"`):
 ```
 "QA Owner[People]" = currentUser() AND updated >= "<start>" AND updated < "<end>" ORDER BY updated DESC
 status CHANGED BY currentUser() DURING ("<start>", "<end>")
-"TC Status[Dropdown]" IN ("DONE", "QA REVIEWED") AND updated >= "<start>" AND updated < "<end>"
+project IN (<projects of the cards found by queries 1 and 2>) AND "TC Status[Dropdown]" IN ("DONE", "QA REVIEWED") AND updated >= "<start>" AND updated < "<end>" ORDER BY updated DESC
 ```
-The second finds cards whose status the user moved but does not own; the third finds TC Status moves on cards the user does not own (e.g. TCs the user reviewed). The queries cannot filter by author for `TC Status`, so they are only candidate nets: the author filter is always the changelog check below. For each candidate `getJiraIssue` with `expand=changelog,names` (large results are saved to a file; filter with `jq` on `author.accountId` = the user and `created` inside the window). Field names to look for (ids come from `names`): `TC Status`, `Test Result Approval by QA`.
+The second finds cards whose status the user moved but does not own; the third finds TC Status moves on cards the user does not own (e.g. TCs the user reviewed). Query 3 would return the whole team's cards, so it is limited to the projects of the cards queries 1 and 2 returned (if both are empty, skip it and say Review TC rests on Discord evidence only), uses `maxResults` 50, and when `hasNextPage` is true do not page on: tell the user the net was truncated and narrow it (one `TC Status` value per query, or a one-day window). The queries cannot filter by author for `TC Status`, so they are only candidate nets; the changelog check below decides what counts. For each candidate `getJiraIssue` with `expand=changelog,names` (large results are saved to a file; filter with `jq` on `author.accountId` = the user and `created` inside the window). Field names to look for (ids come from `names`): `TC Status`, `Test Result Approval by QA`.
 - **TC Prep** — `TC Status` → `DONE`, or the user's comment with a TC table
-- **TC reviewed** — `TC Status` → `QA REVIEWED`
+- **Review TC (the user reviewed someone else's TC)** — `TC Status` → `QA REVIEWED` with the user as changelog author, on a card whose TC the user did not prepare
+- **TC passed review (the user's own TC)** — `TC Status` → `QA REVIEWED` by **any** author (normally the reviewer), inside the window, on a card whose TC the user prepared (TC Prep by the user above, or the user's own review-request thread). Used only by the "TC Prep และส่งรีวิวให้ผ่าน" rows. A pass that happens after the window is not counted; mention it as "ผ่านรีวิวหลังวันนั้น"
 - **RTT cleared** — `Test Result Approval by QA` → `PASSED`/`FAILED`/`SKIPPED`, or status → Done after retest
 - **Test story Done** — status → Done by the user
 - Bugs the user opened: `reporter = currentUser() AND issuetype = Bug AND created …`
@@ -64,7 +65,7 @@ Count = evidence items of that row's kind vs the parsed target N:
 - 1 ≤ count < N → ⚠️ ได้ตามเป้าบางส่วน
 - count = 0 → ❌ ไม่ได้ตามเป้า
 - optional ("ถ้ามี") row with no eligible work → omit
-- "ส่งรีวิวให้ผ่าน" rows: count only TCs prepared **and** Reviewed.
+- "ส่งรีวิวให้ผ่าน" rows: count only TCs the user prepared (author = the user) **and** that passed review (`QA REVIEWED` by any author, or the reviewer's Reviewed in the user's own Discord thread) inside the window. The author filter applies to the preparing, never to the reviewer's pass.
 - A card counts **once per target kind**: a TC that is Done and also sent to review is one TC Prep, not two.
 - A row whose source could not be read ("ดึงไม่ได้") is **not judged** (not 0, not ❌): show it as "ดึงไม่ได้" and wait for the user to decide before the overall result and the draft.
 - If no row is left after omitting optional ones, report that and stop.
@@ -114,6 +115,8 @@ Show the draft, wait for Approve, then post it and verify it is visible in the c
 - Resending when the box is empty but the message is not visible → duplicate. Reload and look first.
 - Pressing Return on an empty edit box → Discord offers to delete the message.
 - Adding a reason line, or several card ids on one line.
+- Filtering `QA REVIEWED` by the user as author on the user's own TCs: the reviewer sets it, so the pass is accepted from any author (only the preparing is author-filtered).
+- Running the `TC Status` net without a project limit → the whole team's cards (the same query without `project IN (…)` also returned MICA2 cards).
 
 ## Output
 
