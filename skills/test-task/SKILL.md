@@ -77,6 +77,7 @@ Post the comment first, then transition. If either call fails, say which and sto
 
 ## Rules
 
+- MUST start every question to the PO or anyone else with its source label: `AC_xx:`, `EC_xx:` or `Business Rule: <name>` (several sources: list each; none, e.g. prototype only: `Prototype: <screen>`). Same text in chat, gate and any post. Never ask an unlabelled question.
 - MUST show the plan table and get Approve before any test starts.
 - MUST name videos `AC_xx` / `EC_xx` (`X_xx` for extra), mp4 only.
 - MUST post bullets with mp4 links only; no screenshots or webm.

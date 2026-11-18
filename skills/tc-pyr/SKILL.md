@@ -77,6 +77,7 @@ Finish with one report line per step. If one step fails, say which, and do not r
 
 ## Rules
 
+- MUST start every question to the PO or anyone else with its source label: `AC_xx:`, `EC_xx:` or `Business Rule: <name>` (several sources: list each; none, e.g. prototype only: `Prototype: <screen>`). Same text in chat, gate and any post. Never ask an unlabelled question.
 - MUST take the ticket key from the command. Never guess it.
 - MUST take every button name and UI text from the ticket only. The prototype is a rough picture for developers (layout and flow); never copy its wording.
 - MUST show the HTML review gate and get explicit Approve before the first write to Qase, Drive or the tracking sheet (create, update and review fixes).
