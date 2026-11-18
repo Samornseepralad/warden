@@ -78,7 +78,7 @@ skills/tc-pyr/   SKILL.md + references/{pyr,execute}.md
 skills/tc-ols/   SKILL.md + references/{ols,execute}.md
 skills/qase-run/ SKILL.md + references/video-evidence.md
 skills/test-task/ SKILL.md + references/video-evidence.md   (video-evidence.md copies must stay identical)
-skills/focus-target-update/ SKILL.md
+skills/focus-target-update/ SKILL.md + references/discord-posting.md
 ```
 
 ## Prerequisite: Helix
