@@ -163,4 +163,6 @@ Classify each finding, one line each, with sources quoted:
 | Cannot verify | The prototype cannot reach that state (e.g. server error) | Not a defect; say it was not checked against the prototype |
 | Format / plan | Breaks a rule in "TC format rules" or the plan rules | Fix as the rule says |
 
+**Source label on every question.** Every question to the PO or anyone else (class "Prototype vs ticket", "Not in prototype", "Wording" where the ticket is silent, open scope items, anything else needing an answer) starts with the label of the ticket item it comes from: `AC_03:`, `EC_02:` or `Business Rule:` (name the rule, e.g. `Business Rule: จำกัด 5 ครั้ง`). The label goes first, then the short question; the same text is used in the chat report, the HTML sign-off gate and the PO post. If the question comes from several items, list each label. If it comes from none of them (e.g. prototype only), write `Prototype:` and name the screen. Never post an unlabelled question.
+
 Each finding: TC ID, the quoted TC text, `prototype shows` (screen and element) for layout and flow findings, and the ticket quote for every wording finding. Report **Good** vs **Need Improve** as the Helix workflow does, with counts per class; keep it short. Never rewrite a TC silently to make it pass; every change goes through the Approve gate.

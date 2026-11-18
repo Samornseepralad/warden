@@ -37,6 +37,7 @@ Read [references/ols.md](references/ols.md). Its rules override the generic Heli
 
 ## Rules
 
+- MUST start every question to the PO or anyone else with its source label: `AC_xx:`, `EC_xx:` or `Business Rule: <name>` (several sources: list each; none, e.g. prototype only: `Prototype: <screen>`). Same text in chat, gate and any post. Never ask an unlabelled question.
 - MUST take the ticket key from the command. Never guess it.
 - MUST NOT apply any Pyrite rule (see `tc-pyr`).
 - MUST NOT write secrets into sheet, Jira, repo or chat.
