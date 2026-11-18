@@ -54,9 +54,9 @@ Read [references/pyr.md](references/pyr.md). Its rules override the generic Heli
 2. Load the ticket's TCs (Qase suite / Drive sheet) and the ticket (AC/EC, business rules, "ไม่อยู่ใน ticket นี้:").
 3. Open the prototype headless (profile "Targets") and walk every TC's steps in it.
 4. Run Helix `tc-review-workflow` with the profile's "Review-TC overlay": **prototype for layout and flow, ticket for all wording (button names and UI text) and rules**; classify findings as the overlay says.
-5. Report Good vs Need Improve in chat, short, findings quoted. Nothing is written yet.
+5. Report Good vs Need Improve in chat, short, findings quoted; every question to PO or others carries its AC/EC / Business Rule label. Nothing is written yet.
 6. **Sign-off gate (always after the review).** One HTML review gate, one question. It shows:
-   - the **fix proposal**, only if some finding is fixable by changing TCs: improved TCs per the findings (TC vs prototype, wording, coverage gap, format / plan; "Not in prototype" only when the user decided), changed / added / removed rows marked with their finding. Findings that need the PO (prototype vs ticket, open "not in prototype", "ต้องถาม PO") are listed, not changed.
+   - the **fix proposal**, only if some finding is fixable by changing TCs: improved TCs per the findings (TC vs prototype, wording, coverage gap, format / plan; "Not in prototype" only when the user decided), changed / added / removed rows marked with their finding. Findings that need the PO (prototype vs ticket, open "not in prototype", "ต้องถาม PO") are listed, not changed. **Every question starts with its source label** (`AC_xx:`, `EC_xx:` or `Business Rule: <name>`; profile "Findings"), in the chat report, the gate and the PO post.
    - the **sign-off actions** with the Summary column F, the Jira `TC Status`, and the exact text that will be posted (profile "Review sign-off"): the Discord reply `Passed` and the Discord post to PO.
    Ask once: `Approve / แก้ไข?`
    - **Approve** → in this order, stopping at the first failure and saying which step failed: (a) if there are fixes, Step 3 for all four places; (b) Summary column F = `QA-REVIEWED`; (c) Jira card field `TC Status` = `QA-REVIEWED`; (d) reply `Passed` in the ticket's existing Discord thread; (e) post the PO review request. Do not ask again.
