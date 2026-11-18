@@ -11,7 +11,7 @@ Applies to every ticket with key `PYR-xxx`. Used by the `tc-pyr` skill.
 
 ## Create-TC flow
 1. Write the TCs with the wording rule below ("Wording source"), then create them in Qase project Pyrite (suite chosen per feature; e.g. Authentication › Register).
-2. In the Drive folder, create subfolder `PYR-xxx` and put the TC sheet inside, copied from the template format.
+2. In the Drive folder, create subfolder `PYR-xxx` and put the TC sheet inside, copied from the template, then apply "Drive TC sheet format" below.
 3. Create (or update) the Qase **Test plan** for the ticket — see "Qase Test plan" below.
 4. Update the tracking sheet row for the ticket.
 5. Keep Qase cases, Test plan, sheet and any CSV identical.
@@ -20,7 +20,34 @@ Applies to every ticket with key `PYR-xxx`. Used by the `tc-pyr` skill.
 
 **`updateTCSheet`:** after a review or change, update all four, in order: Qase TCs → Qase Test plan → Drive TC sheet → tracking sheet. Confirm the ticket if ambiguous.
 
-**Definition of done (create):** Qase cases + Qase Test plan + Drive TC sheet + tracking sheet updated, Jira `TC Status` = `DONE`, and the Discord thread created (see "Create sign-off"). Then report done and stop. Do NOT attach CSVs to Jira. A Jira comment is posted only when the user answers ใช่ to the "Question comment" prompt; setting the `TC Status` field is not a comment.
+**Definition of done (create):** Qase cases + Qase Test plan + Drive TC sheet + tracking sheet updated, Jira `TC Status` = `DONE`, and the Discord thread created and its link saved (see "Create sign-off"). Then report done and stop. Do NOT attach CSVs to Jira. A Jira comment is posted only when the user answers ใช่ to the "Question comment" prompt; setting the `TC Status` field is not a comment.
+
+## Drive TC sheet format
+Applies to every TC sheet this skill creates or updates (create, `update`, `updateTCSheet`, review fixes). The template (`TC_TEMPLATE`) keeps its colors, borders, header text and the status dropdown; the settings below replace its font, wrapping and column widths. Apply them to the whole used range (header row and every TC row), in one `batchUpdate`, after the rows are written:
+
+- **Font:** `Roboto`, size `10` on every cell (header included). Header bold; body not bold.
+- **Text wrapping:** `WRAP` on every cell, header and body. (The template's body rows are `OVERFLOW_CELL`: change them.)
+- **Alignment:** body rows vertical `TOP`; header vertical `MIDDLE`, horizontal `CENTER`. `Test Case ID` and `Test Case Type` horizontal `CENTER`; everything else left.
+- **Column widths (px)** = the widths of the template `TC_TEMPLATE` (tab `PRY-xx TC`), set explicitly, no auto-fit (auto-fit makes the long text columns thousands of pixels wide and the short ones too narrow):
+
+| Col | Header | Width |
+|---|---|---|
+| A | Test Case ID | 100 |
+| B | Mapping with AC in ticket | 155 |
+| C | Module / Feature | 164 |
+| D | Test Title | 274 |
+| E | Test Case Type | 169 |
+| F | Precondition | 302 |
+| G | Test Data | 302 |
+| H | Test Step | 302 |
+| I | Expected Result | 302 |
+| J | QA Owner | 158 |
+| K | PO/BA - TC Review Status | 100 |
+| L | PO/BA - Feedback | 100 |
+
+  If the template has more or fewer columns, keep these widths for the columns that match by header and give any other column 150. Never leave a column under 80 or over 320. If the template's widths change, the template wins: read them from its column metadata and update this table.
+- **Row heights:** after the widths are set, `autoResizeDimensions` on the TC rows (ROWS). Read one row with several numbered lines back: if its height is only one line (about 21 px), the resize did not take effect, so set each row's height by hand: lines × 15 + 8 px, where lines = the largest, over the row's cells, of the sum of ROUNDUP(characters in a line / ((column width − 10) / 7)) over its lines. Header row 32 px. Freeze row 1.
+- **Check before reporting:** read the font, wrap and widths back from one header cell, one body row and the column metadata, and say in the report `Roboto 10, wrap, widths set` or what differs. Row heights are estimates when set by hand: say so.
 
 ## Ticket review (before writing TCs)
 Early PYR tickets have a **prototype** instead of Figma. **The prototype is a rough picture for developers** (how the pages look and flow), not a wording source.
@@ -77,13 +104,20 @@ Always. As soon as the ticket's TCs exist in Qase, put them in a Test plan. One 
 - **Glossary:** English-term-first. Use the ticket's own wording (keep English where the ticket writes English: checkbox, badge, dropdown, permission, scope, role, account, login, tab, filter, status). Do not raise glossary-vs-ticket collisions as questions; still show the term table for information.
 - **No Figma / PRD link in the ticket = absent.** Do not ask for them. Record "no Figma / no PRD" in the pre-draft review and Remark. The prototype (see "Ticket review") is still compared with the ticket.
 
+## Thread webhook
+The review thread is created and answered through a **webhook of the QA channel, which is a Forum channel**. A webhook can only post; it cannot read the channel, so the thread is tracked by a link saved on the ticket's row.
+- **URL (secret):** `DISCORD_WEBHOOK_QA` from the environment, else from `~/.claude/channels/discord/.env`. Never print, log, quote or store it anywhere else (not in the Tracking sheet, Jira, Qase, repo or chat). Missing → say in one line `ยังไม่มี DISCORD_WEBHOOK_QA`, and give the thread title and message as ready-to-paste text.
+- **Thread link column:** in the tab `Summary` of the Tracking sheet, the column whose header is `Discord Thread` holds the thread link of each ticket's row. No such column → ask once which column to use (propose the first empty column after the last header); never guess.
+- **Thread link format:** `https://discord.com/channels/<guild_id>/<thread_id>`. `<guild_id>` from `GET <webhook url>` (field `guild_id`); `<thread_id>` is the `channel_id` of the `?wait=true` response. Check that both ids are present before saving.
+- HTTP 404 → webhook deleted; 429 → wait `retry_after` and retry once. Say which in a line and stop at that step.
+
 ## Create sign-off
-Runs only from `/tc-pyr xxx` (create), after the user's Approve and after Qase cases, Test plan, Drive sheet and tracking sheet were written. Values come from the `Config` tab of the Tracking sheet: `DISCORD_QA_CHANNEL`, and one entry per QA member: `MENTION_SAMORN`, `MENTION_NIPIT`, `MENTION_SUJAREE`. Each value is either a ready mention (`<@id>`) or the person's Discord **username**. A plain `@username` typed as text does not ping, so with a username, look the member up through the Discord MCP and use the real mention (`<@id>`) in the message. If the lookup fails or finds more than one match, ask once; never post a plain-text name as if it were a mention. A missing key → ask once, never guess. If the Discord MCP is not connected, do step 1, then give the thread title and body as ready-to-paste text and say Discord was not reachable. Never use another route.
+Runs only from `/tc-pyr xxx` (create), after the user's Approve and after Qase cases, Test plan, Drive sheet and tracking sheet were written. Values come from the `Config` tab of the Tracking sheet: `DISCORD_QA_CHANNEL`, and one entry per QA member: `MENTION_SAMORN`, `MENTION_NIPIT`, `MENTION_SUJAREE`. Each value is either a ready mention (`<@id>`) or the person's Discord **username**. A plain `@username` typed as text does not ping, so with a username, look the member up through the Discord MCP and use the real mention (`<@id>`) in the message. If the lookup fails or finds more than one match, ask once; never post a plain-text name as if it were a mention. A missing key → ask once, never guess. The thread itself is created through the **QA-channel webhook** (see "Thread webhook"). If a username cannot be resolved because the Discord MCP is not connected, ask once for the `<@id>`. If the webhook is missing or fails, do step 1, then give the thread title and body as ready-to-paste text and say Discord was not reachable. Never use another route.
 
 1. **Jira field `TC Status` = `DONE`.** Atlassian MCP `editJiraIssue`, `fields: {"TC Status": {"value": "DONE"}}`. Set only this field: no status change, no comment. Read the card back once and confirm.
-2. **Create a Discord thread in `DISCORD_QA_CHANNEL`.**
-   - **Thread name:** `PYR-xxx <Jira ticket name>` (the key, one space, the Jira summary exactly as in Jira; trim to Discord's 100-character limit only if it is longer).
-   - **First message:**
+2. **Create a Discord thread in `DISCORD_QA_CHANNEL`** (a Forum post, through the webhook): `POST <DISCORD_WEBHOOK_QA>?wait=true`, `Content-Type: application/json`, body `{"thread_name": "<thread name>", "content": "<first message>", "allowed_mentions": {"users": ["<reviewer id>"]}}`. Then save the thread link (see "Thread webhook") in the `Discord Thread` column of the ticket's row, and show it in the report.
+   - **Thread name** (the `thread_name` field): `PYR-xxx <Jira ticket name>` (the key, one space, the Jira summary exactly as in Jira; trim to Discord's 100-character limit only if it is longer).
+   - **First message** (the `content` field):
 
 ```
 <one mention> need review tc
@@ -92,11 +126,11 @@ TC: [Link](<Drive link of the ticket's TC sheet>)
 
    - **Reviewer: exactly one person, picked at random** from Samorn, Nipit and Sujaree, **excluding the person who created the TCs** (the person running this skill, identified from the Atlassian user and matched to one of the three; the creator is never tagged). Pick with real randomness (for example `python3 -c "import random,sys; print(random.choice(sys.argv[1:]))" A B`), not by choice. Tag one person only, never two. If the creator cannot be matched to one of the three, ask once who created them.
    - `Link` is the Drive link of the TC sheet inside the ticket's `PYR-xxx` Drive subfolder (the same link stored in the `TC` column of the Summary tab).
-   - If a thread for `PYR-xxx` already exists in the channel, do not create a second one: say so and skip.
-3. Show the thread name, the chosen reviewer and the exact body in the review gate before posting. Post nothing that was not shown and approved. The reviewer is picked when the gate is built, so the approved text is what gets posted. Never create two threads for one ticket in one run.
+   - If the ticket's row already has a thread link in the `Discord Thread` column, do not create a second thread: say so, show the link and skip.
+3. Show the thread name, the chosen reviewer and the exact body in the review gate before posting. Post nothing that was not shown and approved. The reviewer is picked when the gate is built, so the approved text is what gets posted. Never create two threads for one ticket in one run. A webhook cannot see the channel, so a thread created by hand is not known: the user tells you.
 
 ## Question comment
-Runs only from `/tc-pyr xxx` (create), after the Create sign-off, and only if **open questions** for the PO remain. No open questions → skip silently. Uses `DISCORD_QUESTION_CHANNEL`, `PO_MENTIONS` (Discord) and `PO_JIRA_ACCOUNT` (Jira accountId or e-mail of the PO; an e-mail is resolved with `lookupJiraAccountId`) from the `Config` tab (missing → ask once, never guess). If the Discord MCP is not connected, post the Jira comment only if the user said yes, then give the Discord message as ready-to-paste text.
+Runs only from `/tc-pyr xxx` (create), after the Create sign-off, and only if **open questions** for the PO remain. No open questions → skip silently. Uses `DISCORD_QUESTION_CHANNEL`, `POPYR_MENTIONS` (Discord) and `PO_JIRA_ACCOUNT` (Jira accountId or e-mail of the PO; an e-mail is resolved with `lookupJiraAccountId`) from the `Config` tab (missing → ask once, never guess). If the Discord MCP is not connected, post the Jira comment only if the user said yes, then give the Discord message as ready-to-paste text.
 
 1. Show the exact comment text (below) and the Discord message, then ask once, in Thai: `comment ใน Jira ไหม? (ใช่ / ไม่)`. The answer covers both the Jira comment and the Discord post.
 2. **ไม่** → post nothing. The questions stay in chat for the user to forward.
@@ -109,28 +143,16 @@ Runs only from `/tc-pyr xxx` (create), after the Create sign-off, and only if **
      ```
      Bullet rules: one line per question, one short sentence with only the ask (what is unclear, what the PO must decide). No quoted paragraphs, no background, no option lists. Only the PO is mentioned. No other text, no secrets.
    - Build the comment link from the result: `<Jira site>/browse/PYR-xxx?focusedCommentId=<comment id>`. Open check: the link must contain the new comment id.
-   - Post in `DISCORD_QUESTION_CHANNEL`: `<PO_MENTIONS> มี comment <comment link>` (PO resolved to a real mention as in "Create sign-off").
+   - Post in `DISCORD_QUESTION_CHANNEL`: `<POPYR_MENTIONS> มี comment <comment link>` (PO resolved to a real mention as in "Create sign-off").
 4. Post once per run. If the Jira comment fails, do not post to Discord. Stop and say which step failed.
 
 ## Review sign-off
-Runs only from `/tc-pyr xxx review`, after the user's Approve (and after the four-place update when there were fixes). Values come from the `Config` tab of the Tracking sheet: `DISCORD_QA_CHANNEL`, `DISCORD_PO_CHANNEL`, `PO_MENTIONS` (one or more Discord usernames or `<@id>` / role mentions, separated by spaces; usernames are resolved to real mentions through the Discord MCP as in "Create sign-off", never posted as plain text). A missing key → ask once, never guess. Discord tools come from the Discord MCP; if it is not connected, do steps 1 and 2, then do step 2 as well and give the two messages as ready-to-paste text and say Discord was not reachable. Never use another route.
+Runs only from `/tc-pyr xxx review`, after the user's Approve (and after the four-place update when there were fixes). Values come from the `Config` tab of the Tracking sheet: `DISCORD_QA_CHANNEL`. A missing key → ask once, never guess. The `Passed` reply (step 3) goes through the QA-channel webhook (see "Thread webhook"); There is no PO post in this sign-off. If the webhook is missing or fails, give the `Passed` text as ready-to-paste; steps 1 and 2 always run, and say so. Never use another route.
 
 1. **Summary column F.** In the tab `Summary` of the Tracking sheet, find the row whose `Ticket No.` is `PYR-xxx` and set column F ("Review Test case by QA") to `QA-REVIEWED`. Change only that cell. Column G (PO/BA review) stays as it is.
 2. **Jira field `TC Status`.** On the Jira card `PYR-xxx` set the select field **TC Status** to `QA-REVIEWED` (Atlassian MCP `editJiraIssue`, `fields: {"TC Status": {"value": "QA-REVIEWED"}}`; the field accepts TO DO, IN PROGRESS, BLOCKED, DONE, QA-REVIEWED, PO/BA-REVIEWED, NOT REQUIRED). Set only this field. Do not change the card's status, assignee or any other field, and do not post a Jira comment. Read the card back once and confirm the value.
-3. **Reply `Passed` in the existing Discord thread.** In `DISCORD_QA_CHANNEL`, find the thread / message that already exists for `PYR-xxx` (by the key in its title or first message) and reply with exactly `Passed`. If none exists, do not create one: say so and give the text.
-4. **Ask the PO to review.** Post one message in `DISCORD_PO_CHANNEL`, in this format:
-
-```
-<PO_MENTIONS> need po review tc
-• [PYR-xxx](<Jira link of the ticket>)  <Jira ticket name>
-
-Test Cases Summary: [Link](<TC link>)
-```
-
-   - The bullet text `PYR-xxx` is a hyperlink to the ticket in Jira; after it, two spaces and the **Jira ticket name** exactly as in Jira.
-   - `Link` is the hyperlink in the `TC` column (D) of that ticket's row in the `Summary` tab (the ticket's TC sheet). Read the cell hyperlink, not the cell text.
-   - One ticket per run, so one bullet. Same format as earlier posts in that channel; do not add text.
-5. Show the exact text of (3) and (4) in the sign-off gate before posting. Post nothing that was not shown and approved. Never post twice for the same ticket in one run.
+3. **Reply `Passed` in the existing Discord thread.** Read the thread link from the `Discord Thread` column of the ticket's row in the `Summary` tab; `<thread_id>` is the number after the last `/`. Reply with exactly `Passed`: `POST <DISCORD_WEBHOOK_QA>?thread_id=<thread_id>&wait=true`, body `{"content": "Passed", "allowed_mentions": {"parse": []}}`. Check that the response holds a message `id`. If the cell is empty, do not create a thread: say so and give the text. If HTTP 404 (thread deleted, or the webhook is not of this channel), say so and give the text. An archived thread is reopened by the post; accept that.
+4. Show the exact text of (3) in the sign-off gate before posting. Post nothing that was not shown and approved. Never post twice for the same ticket in one run.
 
 ## Review-TC overlay
 Used by `/tc-pyr xxx review` (Helix `tc-review-workflow` with this overlay). Review the TCs of one ticket against **the prototype for layout and flow, and the ticket for all wording and rules**, plus the PYR format rules. The review itself writes nothing and posts no Jira comment. Fixable findings become a fix proposal; after the user's explicit Approve the fixes are applied to **all four places** (Qase TC → Test plan → Drive sheet → tracking sheet, the `update` flow). Findings that need the PO are never applied.
@@ -163,6 +185,6 @@ Classify each finding, one line each, with sources quoted:
 | Cannot verify | The prototype cannot reach that state (e.g. server error) | Not a defect; say it was not checked against the prototype |
 | Format / plan | Breaks a rule in "TC format rules" or the plan rules | Fix as the rule says |
 
-**Source label on every question.** Every question to the PO or anyone else (class "Prototype vs ticket", "Not in prototype", "Wording" where the ticket is silent, open scope items, anything else needing an answer) starts with the label of the ticket item it comes from: `AC_03:`, `EC_02:` or `Business Rule:` (name the rule, e.g. `Business Rule: จำกัด 5 ครั้ง`). The label goes first, then the short question; the same text is used in the chat report, the HTML sign-off gate and the PO post. If the question comes from several items, list each label. If it comes from none of them (e.g. prototype only), write `Prototype:` and name the screen. Never post an unlabelled question.
+**Source label on every question.** Every question to the PO or anyone else (class "Prototype vs ticket", "Not in prototype", "Wording" where the ticket is silent, open scope items, anything else needing an answer) starts with the label of the ticket item it comes from: `AC_03:`, `EC_02:` or `Business Rule:` (name the rule, e.g. `Business Rule: จำกัด 5 ครั้ง`). The label goes first, then the short question; the same text is used in the chat report and the HTML sign-off gate. If the question comes from several items, list each label. If it comes from none of them (e.g. prototype only), write `Prototype:` and name the screen. Never post an unlabelled question.
 
 Each finding: TC ID, the quoted TC text, `prototype shows` (screen and element) for layout and flow findings, and the ticket quote for every wording finding. Report **Good** vs **Need Improve** as the Helix workflow does, with counts per class; keep it short. Never rewrite a TC silently to make it pass; every change goes through the Approve gate.

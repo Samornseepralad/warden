@@ -42,8 +42,8 @@ Read [references/pyr.md](references/pyr.md). Its rules override the generic Heli
    - No approval = no write. Silence or a question is not approval.
 6. Create the TCs in Qase project Pyrite.
 7. **Create / update the Qase Test plan** named `PYR-783 <ticket name>` with exactly these cases (profile "Qase Test plan"). Always, not on request. Verify the case count.
-8. Create the Drive subfolder + TC sheet; update the tracking sheet row.
-9. **Create sign-off** (profile "Create sign-off"): Jira `TC Status` = `DONE`; then create the Discord thread `PYR-783 <Jira name>` in the QA channel, first message = one randomly picked reviewer (Samorn / Nipit / Sujaree, never the creator) + `need review tc` + `TC: Link` to the Drive TC sheet. Stop at the first failure and say which step failed.
+8. Create the Drive subfolder + TC sheet, formatted per the profile "Drive TC sheet format" (Roboto 10, wrap, set column widths); update the tracking sheet row.
+9. **Create sign-off** (profile "Create sign-off"): Jira `TC Status` = `DONE`; then create the Discord thread `PYR-783 <Jira name>` in the QA channel (Forum post through the webhook, link saved on the ticket's Summary row), first message = one randomly picked reviewer (Samorn / Nipit / Sujaree, never the creator) + `need review tc` + `TC: Link` to the Drive TC sheet. Stop at the first failure and say which step failed.
 10. **Question comment** (profile "Question comment"): only if open PO questions remain, ask `comment ใน Jira ไหม? (ใช่ / ไม่)`. ใช่ → Jira comment that tags the PO and lists the questions as short bullets (each starting with its AC/EC), then post `<PO> มี comment <Jira comment link>` in the question channel on Discord. ไม่ → post nothing.
 11. Stop at the definition of done. No CSV attach.
 
@@ -57,13 +57,13 @@ Read [references/pyr.md](references/pyr.md). Its rules override the generic Heli
 4. Run Helix `tc-review-workflow` with the profile's "Review-TC overlay": **prototype for layout and flow, ticket for all wording (button names and UI text) and rules**; classify findings as the overlay says.
 5. Report Good vs Need Improve in chat, short, findings quoted; every question to PO or others carries its AC/EC / Business Rule label. Nothing is written yet.
 6. **Sign-off gate (always after the review).** One HTML review gate, one question. It shows:
-   - the **fix proposal**, only if some finding is fixable by changing TCs: improved TCs per the findings (TC vs prototype, wording, coverage gap, format / plan; "Not in prototype" only when the user decided), changed / added / removed rows marked with their finding. Findings that need the PO (prototype vs ticket, open "not in prototype", "ต้องถาม PO") are listed, not changed. **Every question starts with its source label** (`AC_xx:`, `EC_xx:` or `Business Rule: <name>`; profile "Findings"), in the chat report, the gate and the PO post.
-   - the **sign-off actions** with the Summary column F, the Jira `TC Status`, and the exact text that will be posted (profile "Review sign-off"): the Discord reply `Passed` and the Discord post to PO.
+   - the **fix proposal**, only if some finding is fixable by changing TCs: improved TCs per the findings (TC vs prototype, wording, coverage gap, format / plan; "Not in prototype" only when the user decided), changed / added / removed rows marked with their finding. Findings that need the PO (prototype vs ticket, open "not in prototype", "ต้องถาม PO") are listed, not changed. **Every question starts with its source label** (`AC_xx:`, `EC_xx:` or `Business Rule: <name>`; profile "Findings"), in the chat report and the gate.
+   - the **sign-off actions** with the Summary column F, the Jira `TC Status`, and the exact text that will be posted (profile "Review sign-off"): the Discord reply `Passed`.
    Ask once: `Approve / แก้ไข?`
-   - **Approve** → in this order, stopping at the first failure and saying which step failed: (a) if there are fixes, Step 3 for all four places; (b) Summary column F = `QA-REVIEWED`; (c) Jira card field `TC Status` = `QA-REVIEWED`; (d) reply `Passed` in the ticket's existing Discord thread; (e) post the PO review request. Do not ask again.
+   - **Approve** → in this order, stopping at the first failure and saying which step failed: (a) if there are fixes, Step 3 for all four places; (b) Summary column F = `QA-REVIEWED`; (c) Jira card field `TC Status` = `QA-REVIEWED`; (d) reply `Passed` in the ticket's existing Discord thread. Do not ask again.
    - **แก้ไข** → change the draft, regenerate the HTML, ask again.
    - No approval = no write and no post.
-7. Report in a few lines: what was updated (four places if fixes), column F, Jira `TC Status`, the two Discord posts (links), open PO questions.
+7. Report in a few lines: what was updated (four places if fixes), column F, Jira `TC Status`, the Discord `Passed` reply (link), open PO questions.
 
 ## Step 3 — Update (full sync, always all four)
 
@@ -71,7 +71,7 @@ Read [references/pyr.md](references/pyr.md). Its rules override the generic Heli
 
 1. **Qase TCs** — change / add / remove cases in place (same ids; reorder by overwriting slots, never delete + recreate).
 2. **Qase Test plan** `PYR-783 <ticket name>` — re-sync cases and title; verify count.
-3. **Drive TC sheet** — same rows, IDs renumbered `TC-01…` after sorting.
+3. **Drive TC sheet** — same rows, IDs renumbered `TC-01…` after sorting; re-apply the profile "Drive TC sheet format" (font, wrap, widths, row heights).
 4. **Tracking sheet** — update the ticket's row (TC count, links, status).
 
 Finish with one report line per step. If one step fails, say which, and do not report done. Qase, plan, sheet and tracking row must end identical.

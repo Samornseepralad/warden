@@ -9,7 +9,6 @@ Claude skills for QA test-case prep, one skill per project.
 | `/tc-pyr xxx review` | Review TCs against the prototype (layout and flow) and the ticket (all wording), plus the PYR rules then proposes fixes and, on Approve, updates Qase TC, Test plan, Drive sheet and tracking sheet |
 | `/tc-pyr xxx run` | Manual execution from the TC sheet |
 | `/qase-run xxx` | Run the Qase Test plan of PYR-xxx: Test run named like the plan, one mp4 per case (named by Test Title) on Drive, link in each actual result |
-| `/thread-close` | Close the finished review threads in the QA Discord channel: your threads with a whole-word pass / passed / reviewed / approve / approved (any case), archive, then ✅ on its post in the channel. `/thread-close dry` only lists them |
 | `/test-task xxx` | Test card PYR-xxx by AC/EC: short plan table, **Approve**, mp4 per AC_xx / EC_xx, Jira comment (mp4 links), move card Done / In Progress |
 | `/tc-ols xxxx` | Prepare TCs for **OLS-xxxx** with the OLS rules (Core / Edge, OLS glossary) |
 | `/tc-ols xxxx format` | Move OLS TCs into the release template |
@@ -33,7 +32,7 @@ TC review for OLS, or without PYR rules: Helix `/tc-review`.
 - Checks the TCs against the **prototype for layout and flow** and against the **ticket for all wording** (button names, UI text) and rules, plus PYR format rules and the Test plan.
 - Reports Good vs Need Improve in chat. The review itself writes nothing.
 - If some findings are fixable, it drafts the fixes in an HTML and asks once: **update everywhere?** On Approve it updates all four places (same as `update`), so no separate `update` is needed afterwards. Findings that need the PO are listed, never applied.
-- **Sign-off (after Approve):** sets the `Summary` tab column F of the ticket's row and the Jira card field **TC Status** to `QA-REVIEWED`, replies `Passed` in the ticket's existing Discord thread (QA channel), and posts the PO review request in the PO channel (`@PO need po review tc`, bullet `PYR-xxx` Jira link + Jira name, `Test Cases Summary: Link`). The exact messages are shown in the HTML gate before posting. Without a Discord connection, the messages are given as text to paste.
+- **Sign-off (after Approve):** sets the `Summary` tab column F of the ticket's row and the Jira card field **TC Status** to `QA-REVIEWED`, replies `Passed` in the ticket's existing Discord thread (QA channel). The exact message is shown in the HTML gate before posting. Without a Discord connection, the message is given as text to paste.
 
 ### `/tc-pyr xxx update` — sync TC changes everywhere
 Updates, in order: Qase TCs → Test plan → Drive sheet → tracking sheet, after an HTML review and Approve.
@@ -63,13 +62,6 @@ Use `update` for TC changes that do **not** come from `review`. Most common firs
 - Records one mp4 per AC_xx / EC_xx, posts a Jira comment with bullets and mp4 links only.
 - Passed: `Test on dev: Passed`, tag the reviewers (`QA_REVIEWERS`), move the card to **Done**. Failed: `Test Failed` with mp4, tag the assignee, move the card back to **In Progress**.
 
-### `/thread-close` — close the finished review threads
-- Scans the QA Discord channel (`DISCORD_QA_CHANNEL`) for **active threads you created**.
-- A thread matches when any message has one of `pass`, `passed`, `reviewed`, `approve`, `approved`: any letter case, whole word only (`password` does not match). A match with a negation or failure word (`not`, `fail`, `ไม่` …) is skipped and listed.
-- For each match: archives the thread (not locked, not deleted; anyone can reopen it by posting), then puts ✅ on the thread's post **in the channel** (the message the thread hangs from), never inside the thread.
-- `/thread-close dry` lists what it would close and changes nothing.
-- Needs the Discord MCP; without it, it stops and says so.
-
 ### `/tc-ols xxxx` — OLS
 Create TCs with the OLS rules (Core / Edge, OLS glossary), `format` (move into the release template) and `run`. No Qase Test plan for OLS yet.
 
@@ -88,7 +80,6 @@ Create TCs with the OLS rules (Core / Edge, OLS glossary), `format` (move into t
 skills/tc-pyr/   SKILL.md + references/{pyr,execute}.md
 skills/tc-ols/   SKILL.md + references/{ols,execute}.md
 skills/qase-run/ SKILL.md + references/video-evidence.md
-skills/thread-close/ SKILL.md
 skills/test-task/ SKILL.md + references/video-evidence.md   (video-evidence.md copies must stay identical)
 skills/focus-target-update/ SKILL.md + references/discord-posting.md
 ```
@@ -164,11 +155,11 @@ Team-private values stay out of this public repo. Add to the `Config` tab (Key, 
 | Key | Value |
 |---|---|
 | `VIDEO_FOLDER` | Drive folder for mp4 evidence (`/qase-run`, `/test-task`) |
-| `DISCORD_QA_CHANNEL`, `DISCORD_PO_CHANNEL` | Discord channels for the QA thread reply and the PO review request (`/tc-pyr xxx review`) |
+| `DISCORD_QA_CHANNEL` | Discord QA channel for the review thread and the `Passed` reply (`/tc-pyr xxx review`) |
 | `MENTION_SAMORN`, `MENTION_NIPIT`, `MENTION_SUJAREE` | Discord username (or `<@id>` mention) of each QA member (`/tc-pyr xxx`); a username is resolved to a real mention at post time |
 | `PO_JIRA_ACCOUNT` | Jira accountId or e-mail of the PO, tagged in the question comment (`/tc-pyr xxx`) |
 | `DISCORD_QUESTION_CHANNEL` | Discord channel for the "มี comment <link>" post (`/tc-pyr xxx`) |
-| `PO_MENTIONS` | PO to mention in the review request: Discord usernames, `<@id>` or role mentions, space separated (`/tc-pyr xxx review`) |
+| `POPYR_MENTIONS` | PO to mention in the review request: Discord usernames, `<@id>` or role mentions, space separated (`/tc-pyr xxx review`) |
 | `QA_REVIEWERS` | E-mails to tag for review, comma separated (`/test-task`) |
 | `PROTOTYPE_URL`, `PROTOTYPE_USER` | Pyrite prototype (see below) |
 | `TARGET_SHEET`, `TARGET_TAB` | Focus work sheet URL and its daily Target tab (`/focus-target-update`) |
