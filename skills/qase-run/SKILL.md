@@ -48,6 +48,7 @@ Do not file bugs automatically. For failed cases ask once at the end whether to 
 
 ## Rules
 
+- MUST start every question to the PO or anyone else with its source label: `AC_xx:`, `EC_xx:` or `Business Rule: <name>` (several sources: list each; none, e.g. prototype only: `Prototype: <screen>`). Same text in chat, gate and any post. Never ask an unlabelled question.
 - MUST name the run exactly like the Test plan.
 - MUST name each video exactly like its Test Title; mp4 only.
 - MUST put the Drive mp4 link into the actual result (comment) of every case that was run.
