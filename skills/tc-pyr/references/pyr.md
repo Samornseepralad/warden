@@ -20,7 +20,15 @@ Applies to every ticket with key `PYR-xxx`. Used by the `tc-pyr` skill.
 
 **`updateTCSheet`:** after a review or change, update all four, in order: Qase TCs → Qase Test plan → Drive TC sheet → tracking sheet. Confirm the ticket if ambiguous.
 
-**Definition of done (create):** Qase cases + Qase Test plan + Drive TC sheet + tracking sheet updated, Jira `TC Status` = `DONE`, and the Discord thread created and its link saved (see "Create sign-off"). Then report done and stop. Do NOT attach CSVs to Jira. A Jira comment is posted only when the user answers ใช่ to the "Question comment" prompt; setting the `TC Status` field is not a comment.
+**Definition of done (create):** Qase cases + Qase Test plan + Drive TC sheet + tracking sheet updated, the TC file(s) added as Jira Web links (see "Jira web link"), Jira `TC Status` = `DONE`, and the Discord thread created and its link saved (see "Create sign-off"). Then report done and stop. Do NOT attach CSVs to Jira. A Jira comment is posted only when the user answers ใช่ to the "Question comment" prompt; setting the `TC Status` field is not a comment.
+
+## Jira web link
+Part of create (SKILL.md step 9), after the Drive sheet and tracking row exist and before the Create sign-off. Links **every TC file of the ticket** (the TC sheet(s) in its Drive subfolder `PYR-xxx`) to the Jira card as **Web links**.
+- **Link text (title)** = the file name exactly, as it is in Drive (the same name as the TC sheet file). **URL** = that file's Drive link.
+- Tool: Atlassian `createJiraIssueRemoteIssueLink` (via `discover` → `executeWrite`), inputs `issueIdOrKey`, `url`, `title`. Not a comment, not an attachment, not a URL custom field.
+- **No duplicates:** first `listJiraIssueRemoteIssueLinks` on the ticket. A link whose URL is already there is skipped (a Web link cannot be removed or edited through the tool, so never add one twice). Say in one line which were added and which already existed.
+- Shown in the HTML gate under planned targets (title + URL per link) and covered by the Approve; nothing is added before it.
+- This is not the "Question comment" and needs no extra question to the user. `/tc-pyr xxx update` adds a link only if its URL is missing on the card.
 
 ## Drive TC sheet format
 Applies to every TC sheet this skill creates or updates (create, `update`, `updateTCSheet`, review fixes). The template (`TC_TEMPLATE`) keeps its colors, borders, header text and the status dropdown; the settings below replace its font, wrapping and column widths. Apply them to the whole used range (header row and every TC row), in one `batchUpdate`, after the rows are written:
