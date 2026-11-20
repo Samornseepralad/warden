@@ -19,13 +19,13 @@ tf(){ bash "$T" "$SD/$1" "$TF_URL_FRAGMENT"; }
 PRE='const g=id=>document.getElementById(id);const S=(el,v)=>{if(!el)throw new Error("missing el");if(![...el.options].some(o=>o.value===v))throw new Error("missing option "+v+" in "+el.id);Object.getOwnPropertyDescriptor(HTMLSelectElement.prototype,"value").set.call(el,v);el.dispatchEvent(new Event("change",{bubbles:true}));};'
 run(){ printf '%s' "(function(){try{$PRE $1 }catch(e){return 'ERR '+e.message}})()" > "$SD/r.js"; tf r.js; }
 
-# Duration Taskfolio will log for START END (it takes 1 h off any span that overlaps 12:00-13:00).
+# Duration Taskfolio will log for START END (it takes a flat 1 h off any span that overlaps 12:00-13:00).
 fmt(){ python3 -c "
 import sys
 a,b=sys.argv[1],sys.argv[2]
 m=lambda t:int(t[:2])*60+int(t[3:])
 d=m(b)-m(a)
-if m(a)<720 and m(b)>720: d-=min(m(b),780)-720
+if m(a)<780 and m(b)>720: d-=60
 h,mm=divmod(d,60)
 print(' '.join(([f'{h} h'] if h else [])+([f'{mm} m'] if mm else [])))" "$1" "$2"; }
 
